@@ -29,3 +29,5 @@ class Partition:
 
     def toString(self):
         return "Partition {} (Size: {}, Mount: {}, filesystem: {})".format(self.disk + self.partition,self.size,self.mountpoint, self.type)
+
+
