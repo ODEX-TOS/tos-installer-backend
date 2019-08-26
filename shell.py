@@ -13,4 +13,4 @@ class Command:
         return subprocess.Popen(self.command, shell=True, stdout=subprocess.PIPE)
 
     def GetStdout(self):
-        return self.GetSubProcess().stdout.read()
+        return self.GetSubProcess().stdout.read().replace(b"\n", b" ").decode('ascii')

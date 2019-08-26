@@ -1,4 +1,4 @@
-import argparser
+import argparse
 
 
 import chroot
@@ -13,5 +13,7 @@ import shell
 import user
 
 
-
-print(shell.Command().GetStdout())
+disks=disk.getAllDisks()
+for dsk in disks:
+    print(dsk.toString())
+    print("")
