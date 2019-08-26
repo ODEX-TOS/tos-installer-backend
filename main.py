@@ -35,6 +35,13 @@ def PartitionTableGenExample():
     for command in commands:
         print(command)
 
+def defaultPartitions():
+    table = pt.GenerateDefaultEncryptedTable("/dev/sda", pt.EPartitionTabel.GPT)
+
+    commands = table.generateCommand()
+
+    for command in commands:
+        print(command)
 
 def SourceScriptExample():
     print(script.executeExternalScript("shell.sh"))
@@ -49,5 +56,4 @@ def NetworkConnectExample():
         connection.establishConnection("ssid", "password")
         print("Do we have a network connection {}".format(connection.bIsConnected))
 
-
-NetworkConnectExample()
+defaultPartitions()
