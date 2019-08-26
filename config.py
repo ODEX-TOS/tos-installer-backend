@@ -36,3 +36,15 @@ USER_HOME_BUILDER="mkhomedir_helper {}"
 
 # Default mount point
 MOUNTPOINT="/mnt"
+
+
+# Install command for the bootloader
+BOOTLOADER_EFI="grub-install --efi-directory /boot/efi --force {}"
+BOOTLOADER_DOS="grub-install --root-directory=/boot {}"
+BOOTLOADER_CONFIG="grub-mkconfig -o /boot/grub/grub.cfg"
+
+# default system setting
+LOCALE="BE"
+KEYMAP="be-latin1"
+HOSTNAME="tos"
+ROOT_PWD="123"
