@@ -25,8 +25,8 @@ def diskExample():
 
 def PartitionTableGenExample():
     parts = []
-    parts.append(pt.PartitionInfo("boot", True, "1MiB", "200MiB", False))
-    parts.append(pt.PartitionInfo("lvm", False, "800MiB", "100%", False))
+    parts.append(pt.PartitionInfo("boot", True, "1MiB", "200MiB", False, False))
+    parts.append(pt.PartitionInfo("lvm", False, "800MiB", "100%", False, False))
 
     table = pt.PartitionTable(pt.EPartitionTabel.MSDOS, "/dev/sda", parts)
 
@@ -61,4 +61,4 @@ def CreateUserExample():
     usr.createUser() # create the user <user> with the password <Password>
     usr.createHome() # Create the home directory for the user
 
-defaultPartitions()
+diskExample()

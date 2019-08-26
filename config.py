@@ -17,10 +17,10 @@ GITPACKAGE="git"
 IP="8.8.8.8"
 
 # command to interactivaly connect to wifi
-WIFI-CONNECT-COMMAND="wifi-menu"
+WIFI_CONNECT_COMMAND="wifi-menu"
 
 # command to connect to wifi based on a password first {} is the SSID the second {} is the password
-WIFI-CONNECT-COMMAND-WITH-PASSWORD="nmcli device wifi connect '{}' password '{}'"
+WIFI_CONNECT_COMMAND_WITH_PASSWORD="nmcli device wifi connect '{}' password '{}'"
 
 # Default shell for new users
 DEFAULT_SHELL="/bin/bash"
@@ -33,3 +33,6 @@ GROUPS=["audio", "lp", "optical", "storage", "video", "wheel", "games", "power"]
 
 # command to generate a new users home dir
 USER_HOME_BUILDER="mkhomedir_helper {}"
+
+# Default mount point
+MOUNTPOINT="/mnt"

@@ -8,12 +8,13 @@ class EPartitionTabel:
 
 # Class that stores information needed to generate a partitiontable
 class PartitionInfo:
-    def __init__(self, name, bIsBootable, start, end, bIsEncrypted):
+    def __init__(self, name, bIsBootable, start, end, bIsEncrypted, bIsSwap):
         self.name = name
         self.bIsBootable = bIsBootable
         self.start = start
         self.end = end
         self.bIsEncrypted = bIsEncrypted
+        self.bIsSwap = bIsSwap
 
 # Class that stores a generatable partitiontable
 class PartitionTable:
@@ -56,12 +57,12 @@ class PartitionTable:
 def GenerateDefaultEncryptedTable(disk, tabletype):
     parts = []
     if tabletype == EPartitionTabel.GPT:
-        parts.append(PartitionInfo("efi", True, "1MiB", "200MiB", False))
-        parts.append(PartitionInfo("boot", False, "200MiB", "800MiB", False))
-        parts.append(PartitionInfo("lvm", False, "800MiB", "100%", True))
+        parts.append(PartitionInfo("efi", True, "1MiB", "200MiB", False, False))
+        parts.append(PartitionInfo("boot", False, "200MiB", "800MiB", False, False))
+        parts.append(PartitionInfo("lvm", False, "800MiB", "100%", True, False))
     elif tabletype == EPartitionTabel.MSDOS:
-        parts.append(PartitionInfo("boot", True, "1MiB", "200MiB", False))
-        parts.append(PartitionInfo("lvm", False, "800MiB", "100%", True))
+        parts.append(PartitionInfo("boot", True, "1MiB", "200MiB", False, False))
+        parts.append(PartitionInfo("lvm", False, "800MiB", "100%", True, False))
     return PartitionTable(tabletype, disk, parts)
 
 def GenerateDefaultTable(disk, tabletype):
