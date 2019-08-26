@@ -51,3 +51,26 @@ class PartitionTable:
             commands.append(self.getBaseCommand() + "name {} {}".format(i, partition.name))
             i+=1
         return commands
+
+
+def GenerateDefaultEncryptedTable(disk, tabletype):
+    parts = []
+    if tabletype == EPartitionTabel.GPT:
+        parts.append(PartitionInfo("efi", True, "1MiB", "200MiB", False))
+        parts.append(PartitionInfo("boot", False, "200MiB", "800MiB", False))
+        parts.append(PartitionInfo("lvm", False, "800MiB", "100%", True))
+    elif tabletype == EPartitionTabel.MSDOS:
+        parts.append(PartitionInfo("boot", True, "1MiB", "200MiB", False))
+        parts.append(PartitionInfo("lvm", False, "800MiB", "100%", True))
+    return PartitionTable(tabletype, disk, parts)
+
+def GenerateDefaultTable(disk, tabletype):
+    parts = []
+    if tabletype == EPartitionTabel.GPT:
+        parts.append(PartitionInfo("efi", True, "1MiB", "200MiB", False))
+        parts.append(PartitionInfo("boot", False, "200MiB", "800MiB", False))
+        parts.append(PartitionInfo("root", False, "800MiB", "100%", False))
+    elif tabletype == EPartitionTabel.MSDOS:
+        parts.append(PartitionInfo("boot", True, "1MiB", "200MiB", False))
+        parts.append(PartitionInfo("root", False, "800MiB", "100%", False))
+    return PartitionTable(tabletype, disk, parts)
