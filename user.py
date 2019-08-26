@@ -1,10 +1,11 @@
 import shell
 import crypt
+import config
 
 
 class user:
     # groups is a list of groups
-    def __init__(self, name, password, groups=["audio", "lp", "optical", "storage", "video", "wheel", "games", "power"], shell="/bin/bash", command="useradd -m -p {} -g users -G {} -s {} {} "):
+    def __init__(self, name, password, groups=config.GROUPS, shell=config.DEFAULT_SHELL, command=config.USERADD):
         self.name = name
         self.password = password
         self.groups = groups
@@ -26,5 +27,5 @@ class user:
         shell.Command(command).GetStdout()
 
     def createHome(self):
-        shell.command("mkhomedir_helper {}".format(self.name))
+        shell.command(config.USER_HOME_BUILDER.format(self.name))
 

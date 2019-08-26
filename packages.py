@@ -1,10 +1,10 @@
 import shell
-
+import config
 
 # Class to manage how to install softwate
 class Installer:
     # packages should be a list of strings
-    def __init__(basecommand="pacman -Syu --noconfirm", packages=""):
+    def __init__(basecommand=config.INSTALLCOMMAND, packages=""):
         self.base = basecommand
         self.packages = packages
 
@@ -26,7 +26,7 @@ class Installer:
 # This is a class that is only related to arch based distro's Since it uses the AUR community repo
 # Dependecies should be a file containing the packages in a list
 class AURHandler:
-    def __init__(dependencyFile="", url="https://aur.archlinux.org/yay.git", directory="yay"):
+    def __init__(dependencyFile="", url=config.AURHELPER, directory=config.AURHELPERDIR):
         self.url = url
         self.dir = directory
         self.dependencyFile = dependencyFile
