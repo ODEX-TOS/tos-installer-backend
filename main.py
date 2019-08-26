@@ -46,7 +46,7 @@ def NetworkConnectExample():
         connection.establishConnectionCommand()
         print("Do we have a network connection {}".format(connection.bIsConnected))
     if not connection.bIsConnected:
-        connection.establishConnection("promisI", "54FEF1E6")
+        connection.establishConnection("ssid", "password")
         print("Do we have a network connection {}".format(connection.bIsConnected))
 
 
