@@ -56,4 +56,9 @@ def NetworkConnectExample():
         connection.establishConnection("ssid", "password")
         print("Do we have a network connection {}".format(connection.bIsConnected))
 
+def CreateUserExample():
+    usr= user.user("name", "Password")
+    usr.createUser() # create the user <user> with the password <Password>
+    usr.createHome() # Create the home directory for the user
+
 defaultPartitions()
