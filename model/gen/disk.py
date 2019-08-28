@@ -1,5 +1,5 @@
 from model.model import disk as model
-from model.model import partition, EFilesystem
+from model.gen import partition
 import shell
 import sys
 sys.path.append("...")  # set all imports to root imports
@@ -26,8 +26,7 @@ def getPartitionsByDisk(device):
     # convert the list of string into partition objects
     partitions = []
     for part in parts:
-        partitions.append(partition.Partition(
-            device, mountpoint="/", filesystem=EFilesystem.ext4, start="0", end="0"))
+        partitions.append(partition.getPartitionByDevice(part))
     return partitions
 
 
@@ -41,5 +40,6 @@ def getAllDisks():
 
     disks = []
     for disk in diskslist:
-        disks.append(model(disk, GetDiskSize(disk), getPartitionsByDisk(disk)))
+        disks.append(model.disk(disk, GetDiskSize(
+            disk), getPartitionsByDisk(disk)))
     return disks
