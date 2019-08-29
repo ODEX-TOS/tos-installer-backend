@@ -1,4 +1,4 @@
-from model.model.partition import partition
+from model.model.partition import partition, EFilesystem
 import config
 import shell
 import os
@@ -75,3 +75,18 @@ def getBaseCommand(disk):
     returns the base of the parted command
     """
     return "parted --script '{}' ".format(disk.device)
+
+
+def format(part):
+    """
+    format a partition based on the filesystem. 
+    It returns the return code to indicate if it was succesfull or not.
+    If no matching filesystem was found we return None
+    """
+    if part.filesystem == EFilesystem.EXT4:
+        return shell.Command("mkfs.ext4 {}".format(part.device)).GetReturnCode()
+    elif part.filesystem == EFilesystem.BTRFS:
+        return shell.Command("mkfs.btrfs {}".format(part.device)).GetReturnCode()
+    elif part.filesystem == EFilesystem.FAT32:
+        return shell.Command("mkfs.fat -F32 {}".format(part.device)).GetReturnCode()
+    return None
