@@ -70,7 +70,8 @@ for command in mounts:
 print("\n\n# bootstrapping base system")
 software = sw.software("pacstrap --noconfirm /mnt", packages=[
                        "base", "base-devel", "efibootmgr", "vim", "dialog", "xterm", "grub"])
-print(swb.installSoftware(software))
+for command in swb.installSoftware(software):
+    print(command)
 
 
 print("\n\n# generating fstab")

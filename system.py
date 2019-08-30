@@ -22,7 +22,7 @@ class system:
                 self.locale, self.locale),
             "locale-gen",
             "echo 'LANG={}' > /etc/locale.conf".format(self.locale),
-            "echo KEYMAP='{} > /etc/vconsole.conf".format(self.keymap),
+            "echo KEYMAP='{}' > /etc/vconsole.conf".format(self.keymap),
             "echo '{}' > /etc/hostname".format(self.hostname),
             "echo -e '127.0.0.1   localhost\n::1      localhost\n127.0.1.1    {}.localdomain  {}' > /etc/hosts".format(
                 self.hostname, self.hostname),

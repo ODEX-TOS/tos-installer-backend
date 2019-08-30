@@ -1,0 +1,59 @@
+models:
+  - disks:
+      - disk:
+        device: "/dev/sda"
+        size: "499G"
+        gpt: true
+        partitions:
+          - partition:
+              name: "efi"
+              mount: "/boot/efi"
+              filesystem: "fat32"
+              start: "1MiB"
+              end: "200MiB"
+          - partition:
+              name: "root"
+              mount: "/boot/efi"
+              filesystem: "ext4"
+              start: "200MiB"
+              end: "100%"
+  - chroots:
+      - chroot:
+          name: "root"
+      - chroot:
+          name: "alpha"
+  - users:
+      - user:
+          name: "alpha"
+          password: "123"
+  - bootloader:
+      device: "/dev/sda"
+  - system:
+      local: "en_US.UTF-8"
+      keymap: "be-latin1"
+      hostname: "tos"
+      password: "123"
+  - packages:
+      - package:
+          name: "userpackages"
+          packagefile: "packages.txt" # either from a file
+          package: # or a list in this format
+            - a
+            - b
+execution:
+  - partitiontable: "/dev/sda" # build a partition table
+  - format: "/dev/sda1" # format a partitoin
+  - format: "/dev/sda2"
+  - mount: "/dev/sda" # mount all partitions from this drive
+  - bootstrap # bootstrap the system
+  - fstab # generate fstab based on mounted partitions
+  - chroot:
+    user: "root" # execute the next steps in the chrooted environment
+    steps:
+      - systemsetup
+      - createUser: "alpha"
+      - bootloader
+  - chroot:
+    user: "alpha"
+    steps:
+      - packages: "userpackages"
