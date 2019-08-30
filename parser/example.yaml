@@ -59,15 +59,15 @@ execution:
   - format: "/dev/sda1" # format a partitoin
   - format: "/dev/sda2"
   - mount: "/dev/sda" # mount all partitions from this drive
-  - bootstrap # bootstrap the system
-  - fstab # generate fstab based on mounted partitions
+  - bootstrap: # bootstrap the system
+  - fstab: # generate fstab based on mounted partitions
   - chroot:
-    user: "root" # execute the next steps in the chrooted environment
-    steps:
-      - systemsetup
-      - createUser: "alpha"
-      - bootloader
+      user: "root" # execute the next steps in the chrooted environment
+      steps:
+        - systemsetup:
+        - createuser: "alpha"
+        - bootloader:
   - chroot:
-    user: "alpha"
-    steps:
-      - packages: "userpackages"
+      user: "alpha"
+      steps:
+        - packages: "userpackages"

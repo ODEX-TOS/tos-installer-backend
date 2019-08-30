@@ -23,4 +23,4 @@ def generate(raw):
 
 if __name__ == "__main__":
     # print(content)
-    print(generate(content).model)
+    print(generate(content))
