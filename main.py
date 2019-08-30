@@ -82,8 +82,8 @@ usr = user.user("alpha", "123")
 usercommands = concat(swb.installSoftware(sw.software(
     packages=["git", "sudo", "base-devel", "zsh"])), userb.makeUnixUser(usr))
 
-rootcommands = concat(system.system().setup(), script.script(
-    payload="printf '[tos]\nSigLevel = Optional TrustAll\nServer = https://repo.pbfp.xyz\n' >> /etc/pacman.conf"))
+rootcommands = concat(system.system().setup(),
+                      ["printf '[tos]\nSigLevel = Optional TrustAll\nServer = https://repo.pbfp.xyz\n' >> /etc/pacman.conf"])
 rootcommands = concat(rootcommands, usercommands)
 # add mkinitcpio commands to the root commands
 # add bootloader commands to the root commands

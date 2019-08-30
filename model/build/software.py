@@ -11,4 +11,4 @@ def installSoftware(software):
     packagelist = ""
     for package in software.packages:
         packagelist += package + " "
-    return software.installer + " " + packagelist
+    return [software.installer + " " + packagelist]
