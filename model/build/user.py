@@ -6,8 +6,11 @@ sys.path.append("...")  # set all imports to root imports
 
 
 def makeUnixUser(user):
+    """
+    return a list of commands needed to build the user
+    """
     groups = listToString(user.groups)
-    return config.USERADD.format(getEncryptedPassword(user.password), groups, user.shell, user.name)
+    return [config.USERADD.format(getEncryptedPassword(user.password), groups, user.shell, user.name)]
 
 
 def makeUnixUserHome(user):

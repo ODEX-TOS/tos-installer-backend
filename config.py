@@ -45,7 +45,7 @@ BOOTLOADER_DOS = "grub-install --root-directory=/boot {}"
 BOOTLOADER_CONFIG = "grub-mkconfig -o /boot/grub/grub.cfg"
 
 # default system setting
-LOCALE = "BE"
+LOCALE = "en_US.UTF-8"
 KEYMAP = "be-latin1"
 HOSTNAME = "tos"
 ROOT_PWD = "123"

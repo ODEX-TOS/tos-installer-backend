@@ -11,6 +11,16 @@ import model.model.software as sw
 import model.build.software as swb
 import model.model.script as script
 import model.model.chroot as chroot
+import model.model.user as user
+import model.build.user as userb
+import system
+
+
+def concat(list1, list2):
+    newlist = list1
+    for item in list2:
+        newlist.append(item)
+    return newlist
 
 
 disks = gen.getAllDisks()
@@ -65,5 +75,29 @@ print(swb.installSoftware(software))
 print("\n\n# generating fstab")
 print(script.script(payload=config.FSTAB).payload)
 
+
+# preparing all the chroot commands
+
+usr = user.user("alpha", "123")
+usercommands = concat(swb.installSoftware(sw.software(
+    packages=["git", "sudo", "base-devel", "zsh"])), userb.makeUnixUser(usr))
+
+rootcommands = concat(system.system().setup(), script.script(
+    payload="printf '[tos]\nSigLevel = Optional TrustAll\nServer = https://repo.pbfp.xyz\n' >> /etc/pacman.conf"))
+rootcommands = concat(rootcommands, usercommands)
+# add mkinitcpio commands to the root commands
+# add bootloader commands to the root commands
+
+
+# install yay
+
+# install software
+softwarecommands = swb.installSoftware(sw.software(
+    packages=["a", "b", "c", "d"]))
+
+
 print("\n\n# chrooting as root")
-print(chroot.chroot().start(command=["echo hello world", "echo hi"]))
+print(chroot.chroot().start(command=rootcommands))
+
+print("\n\n# chrooting as user")
+print(chroot.chroot(user="alpha").start(command=softwarecommands))
