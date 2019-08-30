@@ -60,11 +60,14 @@ class chrootmodel:
     """
 
     def __init__(self):
-        self.user = None
         self.mountpoint = "/mnt"
+        self.name = None
+
+    def __repr__(self):
+        return self.__str__()
 
     def __str__(self):
-        return "chrtoot -- user: {} -- mountpount: {}".format(self.user, self.mountpoint)
+        return "\n\t\tchroot -- user: {} -- mountpount: {}".format(self.name, self.mountpoint)
 
 
 class user:
@@ -82,7 +85,7 @@ class user:
         return self.__str__()
 
     def __str__(self):
-        return "\n\t\tuser -- name: {} -- password: {} -- shell: {} -- groups".format(self.name, self.password, self.shell, self.groups)
+        return "\n\t\tuser -- name: {} -- password: {} -- shell: {} -- groups: {}".format(self.name, self.password, self.shell, self.groups)
 
 
 class bootloader:
@@ -175,7 +178,6 @@ def generateModel(raw):
 
 def generateScripts(raw):
     end = []
-    print(raw)
     for pack in raw["scripts"]:
         representation = script()
         if existsDoubleKey(pack, "script", "name"):
@@ -262,6 +264,8 @@ def generateChroots(raw):
         representation = chrootmodel()
         if existsDoubleKey(pack, "chroot", "name"):
             representation.name = pack["chroot"]["name"]
+        if existsDoubleKey(pack, "chroot", "mount"):
+            representation.mountpoint = pack["chroot"]["mount"]
         end.append(representation)
     return end
 
@@ -270,14 +274,14 @@ def generateUsers(raw):
     end = []
     for pack in raw["users"]:
         representation = user()
-        if exists(pack, "name"):
-            representation.name = pack["name"]
-        if exists(pack, "password"):
-            representation.password = pack["password"]
-        if exists(pack, "shell"):
-            representation.shell = pack["shell"]
-        if exists(pack, "groups"):
-            representation.groups = pack["groups"]
+        if existsDoubleKey(pack, "user", "name"):
+            representation.name = pack["user"]["name"]
+        if existsDoubleKey(pack, "user",  "password"):
+            representation.password = pack["user"]["password"]
+        if existsDoubleKey(pack, "user", "shell"):
+            representation.shell = pack["user"]["shell"]
+        if existsDoubleKey(pack, "user", "groups"):
+            representation.groups = pack["user"]["groups"]
         end.append(representation)
     return end
 

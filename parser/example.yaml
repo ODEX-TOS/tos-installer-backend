@@ -1,15 +1,15 @@
 models:
   - disks:
       - disk:
-        device: "/dev/sda"
+        device: "/dev/sda" # can also be /dev/disk/by-uuid or a command in the form $(command here)
         size: "499G"
-        gpt: true
+        gpt: true # is the partitiontable gpt or msdos (by default gpt if not set)
         partitions:
           - partition:
-              name: "efi"
-              mount: "/boot/efi"
-              filesystem: "fat32"
-              start: "1MiB"
+              name: "efi" # just a usefull name to assign a partitions
+              mount: "/boot/efi" # place to mount the partition
+              filesystem: "fat32" # type of filesystem as defined in model.models.partition.EFilesystem
+              start: "1MiB" # parted syntax for defining a location
               end: "200MiB"
           - partition:
               name: "root"
@@ -19,13 +19,22 @@ models:
               end: "100%"
   - chroots:
       - chroot:
-          name: "root"
+          name: "alpha" # name of the user to chroot
+          mount: "/media" # alternative mountpoint to chroot to
       - chroot:
-          name: "alpha"
+          name: "root"
   - users:
       - user:
-          name: "alpha"
-          password: "123"
+          name: "alpha" # user by the name alpha
+          password: "123" # the password of said user
+      - user:
+          name: "betta"
+          password: "456"
+          shell: "/bin/zsh" # default shell for the user
+          groups:
+            - wheel
+            - power
+
   - bootloader:
       device: "/dev/sda"
   - system:
