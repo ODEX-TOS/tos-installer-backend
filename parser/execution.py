@@ -69,6 +69,7 @@ class format(modelSetter):
             for part in disk.partitions:
                 if part.name == self.reference:
                     self.model = part
+                    self.model.device = disk.device
                     return
 
 
@@ -98,6 +99,7 @@ class mount(modelSetter):
             for part in disk.partitions:
                 if part.name == self.reference:
                     self.model = part
+                    self.model.device = disk.device
                     return
 
 

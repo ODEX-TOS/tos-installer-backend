@@ -1,4 +1,7 @@
 
+# TODO: add logic volumes as a subtype of a partition
+
+
 class models:
     """
     A class based representation of the model section of the yaml file
@@ -46,12 +49,13 @@ class partition:
         self.filesystem = None
         self.start = None
         self.end = None
+        self.device = None
 
     def __repr__(self):
         return self.__str__()
 
     def __str__(self):
-        return "\n\t\t\tpartition -- name: {} -- mount: {} -- filesystem: {} -- start: {} -- end: {}".format(self.name, self.mount, self.filesystem, self.start, self.end)
+        return "\n\t\t\tpartition -- name: {} -- mount: {} -- filesystem: {} -- start: {} -- end: {} -- device: {}".format(self.name, self.mount, self.filesystem, self.start, self.end, self.device)
 
 
 class chrootmodel:

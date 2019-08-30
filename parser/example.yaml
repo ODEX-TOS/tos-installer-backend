@@ -12,10 +12,16 @@ models:
               start: "1MiB" # parted syntax for defining a location
               end: "200MiB"
           - partition:
-              name: "root"
-              mount: "/boot/efi"
+              name: "swap"
+              mount: "swap"
               filesystem: "ext4"
               start: "200MiB"
+              end: "8GiB"
+          - partition:
+              name: "root"
+              mount: "/"
+              filesystem: "ext4"
+              start: "8GiB"
               end: "100%"
   - chroots:
       - chroot:
@@ -28,7 +34,7 @@ models:
           name: "alpha" # user by the name alpha
           password: "123" # the password of said user
       - user:
-          name: "betta"
+          name: "zetta"
           password: "456"
           shell: "/bin/zsh" # default shell for the user
           groups:
@@ -50,6 +56,7 @@ models:
             - a
             - b
   - scripts:
+      # todo script should have a user an base command (/bin/sh)
       - script:
           name: "script1"
           file: "test.sh"

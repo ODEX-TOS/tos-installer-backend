@@ -15,6 +15,7 @@ import model.model.user as user
 import model.build.user as userb
 import parser.parse as parse
 import system
+from converter import convertYamlToCommands
 
 
 def concat(list1, list2):
@@ -103,7 +104,11 @@ def functionExample():
 
 
 def configExample():
-    print(parse.parse("parser/example.yaml"))
+    parsed = parse.parse("parser/example.yaml").execution
+    commands = convertYamlToCommands(parsed)
+
+    for command in commands:
+        print(command)
 
 
 configExample()

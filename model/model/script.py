@@ -22,6 +22,9 @@ class script:
         self.payload = payload
         self.user = user
 
+    def exec(self):
+        return [self.shell + " " + self.payload]
+
 
 class bootloader:
     """
