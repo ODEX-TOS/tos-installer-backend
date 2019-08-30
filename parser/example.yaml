@@ -56,9 +56,9 @@ models:
           command: "echo hello world"
 execution:
   - partitiontable: "/dev/sda" # build a partition table
-  - format: "/dev/sda1" # format a partitoin
-  - format: "/dev/sda2"
-  - mount: "/dev/sda" # mount all partitions from this drive
+  - format: "/dev/sda" # format a drive
+  - format: "efi" # format partition based on its name
+  - mount: "/dev/sda" # mount all partitions from this drive you can also specify a partition
   - bootstrap: # bootstrap the system
   - fstab: # generate fstab based on mounted partitions
   - chroot:
@@ -71,3 +71,5 @@ execution:
       user: "alpha"
       steps:
         - packages: "userpackages"
+  - script:
+    name: "script1"

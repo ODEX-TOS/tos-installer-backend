@@ -15,7 +15,16 @@ class execution:
         return "Execution:\n{}".format(string)
 
 
-class partitiontable:
+class modelSetter:
+    def __init__(self):
+        self.model = None
+        self.reference = None
+
+    def setModel(self, model):
+        return
+
+
+class partitiontable(modelSetter):
     """
     The execution step called partitiontable
     It builds the partitiontable
@@ -26,10 +35,16 @@ class partitiontable:
         self.reference = None
 
     def __str__(self):
-        return "PartitionTabel -- reference: {} -- model {}".format(self.reference, self.model)
+        return "PartitionTabel -- reference: {} -- model {}".format(self.reference, self.model).replace("\n", "\n\t\t")
+
+    def setModel(self, model):
+        for disk in model.disks:
+            if disk.device == self.reference:
+                self.model = disk
+                return
 
 
-class format:
+class format(modelSetter):
     """
     The execution step called format
     It formats a partition/drive
@@ -40,10 +55,24 @@ class format:
         self.reference = None
 
     def __str__(self):
-        return "Format -- reference: {} -- model {}".format(self.reference, self.model)
+        return "Format -- reference: {} -- model {}".format(self.reference, self.model).replace("\n", "\n\t\t")
+
+    def setModel(self, model):
+        """
+         Find a disk by its device name If it is a match the disk is the model
+         Otherwise it will search for a match woth a partition based on its name
+        """
+        for disk in model.disks:
+            if disk.device == self.reference:
+                self.model = disk
+                return
+            for part in disk.partitions:
+                if part.name == self.reference:
+                    self.model = part
+                    return
 
 
-class mount:
+class mount(modelSetter):
     """
     The execution step called mount
     It mount a partition or disk to a mountpoint
@@ -54,10 +83,25 @@ class mount:
         self.reference = None
 
     def __str__(self):
-        return "mount -- reference: {} -- model {}".format(self.reference, self.model)
+        return "mount -- reference: {} -- model {}".format(self.reference, self.model).replace("\n", "\n\t\t")
+
+    def setModel(self, model):
+        """
+        Look for a partition or disk to mount
+        It first looks for disks to match based on there device
+        If it can't find any then it will look for a partition based on its name
+        """
+        for disk in model.disks:
+            if disk.device == self.reference:
+                self.model = disk
+                return
+            for part in disk.partitions:
+                if part.name == self.reference:
+                    self.model = part
+                    return
 
 
-class bootstrap:
+class bootstrap(modelSetter):
     """
     The execution step called bootstrap
     It bootstraps packages to a mountpoint
@@ -68,10 +112,16 @@ class bootstrap:
         self.reference = None
 
     def __str__(self):
-        return "bootstrap -- reference: {} -- model {}".format(self.reference, self.model)
+        return "bootstrap -- reference: {} -- model {}".format(self.reference, self.model).replace("\n", "\n\t\t")
+
+    def setModel(self, model):
+        """
+        No model is needed since a bootstrap is provided in the config
+        """
+        self.model = None
 
 
-class fstab:
+class fstab(modelSetter):
     """
     The execution step called fstab
     It builds the fstab file based on mounted partitions
@@ -82,10 +132,16 @@ class fstab:
         self.reference = None
 
     def __str__(self):
-        return "bootstrap -- reference: {} -- model {}".format(self.reference, self.model)
+        return "fstab -- reference: {} -- model {}".format(self.reference, self.model).replace("\n", "\n\t\t")
+
+    def setModel(self, model):
+        """
+        No model is needed since the fstab command is provided in the config
+        """
+        self.model = None
 
 
-class chroot:
+class chroot(modelSetter):
     """
     The execution step called chroot
     It changes the root mountpoint and executes build steps there
@@ -93,16 +149,23 @@ class chroot:
 
     def __init__(self):
         self.user = None
+        self.model = None
         self.steps = [None]
 
     def __str__(self):
         steps = ""
         for step in self.steps:
             steps += "\t\t\t\t{}\n".format(step)
-        return "chroot -- user: {} -- steps: \n{}".format(self.user, steps)
+        return "chroot -- user: {} -- steps: \n{} \t\t\t-- model: {}".format(self.user, steps, str(self.model).replace("\n", "\n\t\t"))
+
+    def setModel(self, model):
+        for root in model.chroots:
+            if self.user == root.name:
+                self.model = root
+                return
 
 
-class systemsetup:
+class systemsetup(modelSetter):
     """
     The execution step called systemsetup
     It builds the basic system information
@@ -113,10 +176,13 @@ class systemsetup:
         self.reference = None
 
     def __str__(self):
-        return "systemsetup -- reference: {} -- model {}".format(self.reference, self.model)
+        return "systemsetup -- reference: {} -- model {}".format(self.reference, self.model).replace("\n", "\n\t\t")
+
+    def setModel(self, model):
+        self.model = model.system
 
 
-class createUser:
+class createUser(modelSetter):
     """
     The execution step called createUser
     It creates a basic unix user
@@ -127,10 +193,10 @@ class createUser:
         self.reference = None
 
     def __str__(self):
-        return "user -- reference: {} -- model {}".format(self.reference, self.model)
+        return "user -- reference: {} -- model {}".format(self.reference, self.model).replace("\n", "\n\t\t")
 
 
-class bootloaderstep:
+class bootloaderstep(modelSetter):
     """
     The execution step called bootloader
     It generates the bootloader configurations
@@ -141,10 +207,13 @@ class bootloaderstep:
         self.reference = None
 
     def __str__(self):
-        return "bootloader -- reference: {} -- model {}".format(self.reference, self.model)
+        return "bootloader -- reference: {} -- model {}".format(self.reference, self.model).replace("\n", "\n\t\t")
+
+    def setModel(self, model):
+        self.model = model.bootloader
 
 
-class packages:
+class packages(modelSetter):
     """
     The execution step called packages
     It installs packages on your system
@@ -155,10 +224,16 @@ class packages:
         self.reference = None
 
     def __str__(self):
-        return "packages -- reference: {} -- model {}".format(self.reference, self.model)
+        return "packages -- reference: {} -- model {}".format(self.reference, self.model).replace("\n", "\n\t\t")
+
+    def setModel(self, model):
+        for package in model.packages:
+            if package.name == self.reference:
+                self.model = package
+                return
 
 
-class scriptstep:
+class scriptstep(modelSetter):
     """
     The execution step called script
     It executes a script
@@ -169,7 +244,13 @@ class scriptstep:
         self.reference = None
 
     def __str__(self):
-        return "script -- reference: {} -- model {}".format(self.reference, self.model)
+        return "script -- reference: {} -- model {}".format(self.reference, self.model).replace("\n", "\n\t\t")
+
+    def setModel(self, model):
+        for script in model.scripts:
+            if self.reference == script.name:
+                self.model = script
+                return
 
 
 def generateExecution(raw):
@@ -188,7 +269,6 @@ def getStep(raw):
     """
     Detect the type of the build step and generate a model from it
     """
-    print(raw)
     if exists(raw, "partitiontable"):
         ptable = partitiontable()
         ptable.reference = raw["partitiontable"]
@@ -221,6 +301,14 @@ def getStep(raw):
         loader = bootloaderstep()
         loader.reference = raw["bootloader"]
         return loader
+    if exists(raw, "packages"):
+        package = packages()
+        package.reference = raw["packages"]
+        return package
+    if exists(raw, "script"):
+        script = scriptstep()
+        script.reference = raw["name"]
+        return script
     if exists(raw, "chroot"):
         root = chroot()
         root.user = raw["chroot"]["user"]

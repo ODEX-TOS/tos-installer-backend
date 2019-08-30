@@ -251,9 +251,11 @@ def generatePackages(raw):
     for pack in raw["packages"]:
         representation = package()
         if existsDoubleKey(pack, "package", "package"):
-            representation.name = pack["package"]["package"]
+            representation.packages = pack["package"]["package"]
         if existsDoubleKey(pack, "package", "packagefile"):
             representation.file = pack["package"]["packagefile"]
+        if existsDoubleKey(pack, "package", "name"):
+            representation.name = pack["package"]["name"]
         end.append(representation)
     return end
 
