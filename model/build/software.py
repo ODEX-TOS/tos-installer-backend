@@ -11,5 +11,4 @@ def installSoftware(software):
     packagelist = ""
     for package in software.packages:
         packagelist += package + " "
-        obj = shell.Command(software.installer + " " + packagelist)
-    return obj.GetReturnCode()
+    return software.installer + " " + packagelist

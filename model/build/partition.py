@@ -1,4 +1,5 @@
 from model.model.partition import partition, EFilesystem
+from model.build.encryption import handleEncryptedPartition
 import config
 import shell
 import os
@@ -80,13 +81,17 @@ def getBaseCommand(disk):
 def format(part):
     """
     format a partition based on the filesystem. 
-    It returns the return code to indicate if it was succesfull or not.
+    It returns a list of command to run
     If no matching filesystem was found we return None
     """
     if part.filesystem == EFilesystem.EXT4:
-        return shell.Command("mkfs.ext4 {}".format(part.device)).GetReturnCode()
+        return ["mkfs.ext4 {}".format(part.device)]
     elif part.filesystem == EFilesystem.BTRFS:
-        return shell.Command("mkfs.btrfs {}".format(part.device)).GetReturnCode()
+        return ["mkfs.btrfs {}".format(part.device)]
     elif part.filesystem == EFilesystem.FAT32:
-        return shell.Command("mkfs.fat -F32 {}".format(part.device)).GetReturnCode()
+        return ["mkfs.fat -F32 {}".format(part.device)]
+    elif part.filesystem == EFilesystem.SWAP:
+        return ["mkswap {}".format(part.device)]
+    elif part.bIsEncrypted:
+        return handleEncryptedPartition(part)
     return None

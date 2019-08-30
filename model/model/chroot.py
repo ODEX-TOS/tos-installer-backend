@@ -11,5 +11,11 @@ class chroot:
         self.mountpoint = mountpoint
         self.user = user
 
-    def start(self, command="/bin/bash"):
-        return shell.Command(self.chroot.format(self.user, self.mountpoint, command)).GetReturnCode()
+    def start(self, command="/bin/bash", herefile="EOF"):
+        if not type(command) is list:
+            return self.chroot.format(self.user, self.mountpoint) + " <<<{}\n".format(herefile) + command + "\n" + herefile
+
+        commands = ""
+        for item in command:
+            commands += item + "\n"
+        return self.chroot.format(self.user, self.mountpoint) + " <<<{}\n".format(herefile) + commands + "\n" + herefile

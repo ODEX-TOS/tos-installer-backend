@@ -52,4 +52,14 @@ ROOT_PWD = "123"
 
 
 # chroot command
-CHROOT = "arch-chroot -u {} {} {}"
+CHROOT = "arch-chroot -u {} {}"
+
+
+# Logic volume/encryption
+LUKS = "cryptsetup luksFormat -v -s 512 -h sha512 {}"
+LUKS_OPEN = "cryptsetup open {} luks_lvm"
+LUKS_NAME = "tos"  # the volume group name
+LUKS_DEVICE = "/dev/mapper/luks_lvm"  # luks_lvm must be the same as LUKS_OPEN
+
+# fstab generator
+FSTAB = "genfstab -U -p {} > {}/etc/fstab".format(MOUNTPOINT, MOUNTPOINT)
