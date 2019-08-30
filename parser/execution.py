@@ -23,9 +23,10 @@ class partitiontable:
 
     def __init__(self):
         self.model = None
+        self.reference = None
 
     def __str__(self):
-        return "PartitionTabel -- model {}".format(self.model)
+        return "PartitionTabel -- reference: {} -- model {}".format(self.reference, self.model)
 
 
 class format:
@@ -36,9 +37,10 @@ class format:
 
     def __init__(self):
         self.model = None
+        self.reference = None
 
     def __str__(self):
-        return "Format -- model {}".format(self.model)
+        return "Format -- reference: {} -- model {}".format(self.reference, self.model)
 
 
 class mount:
@@ -49,9 +51,10 @@ class mount:
 
     def __init__(self):
         self.model = None
+        self.reference = None
 
     def __str__(self):
-        return "mount -- model {}".format(self.model)
+        return "mount -- reference: {} -- model {}".format(self.reference, self.model)
 
 
 class bootstrap:
@@ -62,9 +65,10 @@ class bootstrap:
 
     def __init__(self):
         self.model = None
+        self.reference = None
 
     def __str__(self):
-        return "bootstrap -- model {}".format(self.model)
+        return "bootstrap -- reference: {} -- model {}".format(self.reference, self.model)
 
 
 class fstab:
@@ -75,9 +79,10 @@ class fstab:
 
     def __init__(self):
         self.model = None
+        self.reference = None
 
     def __str__(self):
-        return "bootstrap -- model {}".format(self.model)
+        return "bootstrap -- reference: {} -- model {}".format(self.reference, self.model)
 
 
 class chroot:
@@ -105,9 +110,10 @@ class systemsetup:
 
     def __init__(self):
         self.model = None
+        self.reference = None
 
     def __str__(self):
-        return "systemsetup -- model {}".format(self.model)
+        return "systemsetup -- reference: {} -- model {}".format(self.reference, self.model)
 
 
 class createUser:
@@ -118,9 +124,10 @@ class createUser:
 
     def __init__(self):
         self.model = None
+        self.reference = None
 
     def __str__(self):
-        return "user -- model {}".format(self.model)
+        return "user -- reference: {} -- model {}".format(self.reference, self.model)
 
 
 class bootloaderstep:
@@ -131,9 +138,10 @@ class bootloaderstep:
 
     def __init__(self):
         self.model = None
+        self.reference = None
 
     def __str__(self):
-        return "bootloader -- model {}".format(self.model)
+        return "bootloader -- reference: {} -- model {}".format(self.reference, self.model)
 
 
 class packages:
@@ -144,9 +152,10 @@ class packages:
 
     def __init__(self):
         self.model = None
+        self.reference = None
 
     def __str__(self):
-        return "packages -- model {}".format(self.model)
+        return "packages -- reference: {} -- model {}".format(self.reference, self.model)
 
 
 class scriptstep:
@@ -157,9 +166,10 @@ class scriptstep:
 
     def __init__(self):
         self.model = None
+        self.reference = None
 
     def __str__(self):
-        return "script -- model {}".format(self.model)
+        return "script -- reference: {} -- model {}".format(self.reference, self.model)
 
 
 def generateExecution(raw):
@@ -181,35 +191,35 @@ def getStep(raw):
     print(raw)
     if exists(raw, "partitiontable"):
         ptable = partitiontable()
-        ptable.model = raw["partitiontable"]
+        ptable.reference = raw["partitiontable"]
         return ptable
     if exists(raw, "format"):
         form = format()
-        form.model = raw["format"]
+        form.reference = raw["format"]
         return form
     if exists(raw, "mount"):
         mounter = mount()
-        mounter.model = raw["mount"]
+        mounter.reference = raw["mount"]
         return mounter
     if exists(raw, "bootstrap"):
         boot = bootstrap()
-        boot.model = raw["bootstrap"]
+        boot.reference = raw["bootstrap"]
         return boot
     if exists(raw, "fstab"):
         stab = fstab()
-        stab.model = raw["fstab"]
+        stab.reference = raw["fstab"]
         return stab
     if exists(raw, "systemsetup"):
         setup = systemsetup()
-        setup.model = raw["systemsetup"]
+        setup.reference = raw["systemsetup"]
         return setup
     if exists(raw, "createuser"):
         setup = createUser()
-        setup.model = raw["createuser"]
+        setup.reference = raw["createuser"]
         return setup
     if exists(raw, "bootloader"):
         loader = bootloaderstep()
-        loader.model = raw["bootloader"]
+        loader.reference = raw["bootloader"]
         return loader
     if exists(raw, "chroot"):
         root = chroot()
