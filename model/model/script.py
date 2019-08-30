@@ -28,7 +28,7 @@ class bootloader:
     Object holding all information for writing a bootloader to a boot partition
     """
 
-    def __init__(self, shell="/bin/sh", device="/dev/sda", installcommand=config.BOOTLOADER_EFI, installDOSCommand=config.BOOTLOADER_DOS, configcommand=config.BOOTLOADER_CONFIG, bIsGPT=True):
+    def __init__(self, shell="/bin/sh -c", device="/dev/sda", installcommand=config.BOOTLOADER_EFI, installDOSCommand=config.BOOTLOADER_DOS, configcommand=config.BOOTLOADER_CONFIG, bIsGPT=True):
         self.shell = shell
         self.installCommand = installcommand
         self.installDOSCommand = installDOSCommand
@@ -40,13 +40,15 @@ class bootloader:
         """
         Write a bootloader to the boot partition
         """
+        commands = []
         if self.bIsGPT:
-            shell.Command(
-                self.shell + " -c {}".format(self.installCommand).format(self.device)).GetReturnCode()
+            commands.append(
+                self.shell + "{}".format(self.installCommand).format(self.device))
         else:
-            shell.Command(
-                self.shell + " -c {}".format(self.installDOSCommand).format(self.device)).GetReturnCode()
-        return shell.Command(self.shell + " -c {}".format(self.configCommand)).GetReturnCode()
+            commands.append(
+                self.shell + "{}".format(self.installDOSCommand).format(self.device))
+        commands.append(self.shell + "{}".format(self.configCommand))
+        return commands
 
 
 class git(script):
@@ -65,9 +67,7 @@ class git(script):
         return the status code from git.
         If installing git fails it returns None
         """
-        if self.installGit() == "0":
-            return shell.Command("git clone {} {}".format(self.url, self.destination)).GetReturnCode()
-        return None
+        return [self.installGit(), "git clone {} {}".format(self.url, self.destination)]
 
     def installGit(self):
         """

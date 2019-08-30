@@ -13,6 +13,7 @@ import model.model.script as script
 import model.model.chroot as chroot
 import model.model.user as user
 import model.build.user as userb
+
 import system
 
 
@@ -87,7 +88,8 @@ rootcommands = concat(system.system().setup(),
 rootcommands = concat(rootcommands, usercommands)
 # add mkinitcpio commands to the root commands
 # add bootloader commands to the root commands
-
+rootcommands = concat(rootcommands, script.bootloader(shell="",
+                                                      device=ptabledisk.device, bIsGPT=ptabledisk.bIsGPT).exec())
 
 # install yay
 
