@@ -22,5 +22,5 @@ def generate(raw):
 
 
 if __name__ == "__main__":
-    print(content)
-    print(generate(content).model.packages)
+    # print(content)
+    print(generate(content).model)

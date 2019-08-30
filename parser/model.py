@@ -11,6 +11,10 @@ class models:
         self.packages = [None]
         self.chroots = [None]
         self.users = [None]
+        self.scripts = [None]
+
+    def __str__(self):
+        return "model \n\tdisks: {}\n\tbootloader: {}\n\tsystem: {}\n\tpackages: {}\n\tchroots: {}\n\tusers: {}\n\tscripts: {}".format(self.disks, self.bootloader, self.system, self.packages, self.chroots, self.users, self.scripts)
 
 
 class disk:
@@ -23,6 +27,12 @@ class disk:
         self.size = None
         self.gpt = True
         self.partitions = [None]
+
+    def __repr__(self):
+        return self.__str__()
+
+    def __str__(self):
+        return "\n\tdisk -- device: {} -- size: {} -- gpt: {} -- \n\t\tpartitions [ {} ]".format(self.device, self.size, self.gpt, self.partitions)
 
 
 class partition:
@@ -37,6 +47,12 @@ class partition:
         self.start = None
         self.end = None
 
+    def __repr__(self):
+        return self.__str__()
+
+    def __str__(self):
+        return "\n\t\t\tpartition -- name: {} -- mount: {} -- filesystem: {} -- start: {} -- end: {}".format(self.name, self.mount, self.filesystem, self.start, self.end)
+
 
 class chrootmodel:
     """
@@ -46,6 +62,9 @@ class chrootmodel:
     def __init__(self):
         self.user = None
         self.mountpoint = "/mnt"
+
+    def __str__(self):
+        return "chrtoot -- user: {} -- mountpount: {}".format(self.user, self.mountpoint)
 
 
 class user:
@@ -59,6 +78,12 @@ class user:
         self.shell = "/bin/bash"
         self.groups = None
 
+    def __repr__(self):
+        return self.__str__()
+
+    def __str__(self):
+        return "\n\t\tuser -- name: {} -- password: {} -- shell: {} -- groups".format(self.name, self.password, self.shell, self.groups)
+
 
 class bootloader:
     """
@@ -67,6 +92,9 @@ class bootloader:
 
     def __init__(self):
         self.device = None
+
+    def __str__(self):
+        return "device: {}".format(self.device)
 
 
 class system:
@@ -80,6 +108,9 @@ class system:
         self.hostname = None
         self.password = None
 
+    def __str__(self):
+        return "local: {} -- keymap: {} -- hostname: {} -- password {}".format(self.local, self.keymap, self.hostname, self.password)
+
 
 class package:
     """
@@ -91,6 +122,12 @@ class package:
         self.file = None
         self.packages = None
 
+    def __repr__(self):
+        return self.__str__()
+
+    def __str__(self):
+        return "\n\t\tpackage -- name: {} -- file: {} -- packages: {}".format(self.name, self.file, self.packages)
+
 
 class script:
     """
@@ -99,9 +136,18 @@ class script:
     """
 
     def __init__(self):
+        """
+        if both file and command are set the file will be executed
+        """
         self.name = None
-        self.file = None
-        self.command = None
+        self.file = None  # run the file as a script
+        self.command = None  # run a command as a script
+
+    def __repr__(self):
+        return self.__str__()
+
+    def __str__(self):
+        return "script -- name: {} -- file: {} -- command: {}".format(self.name, self.file, self.command)
 
 
 def generateModel(raw):
@@ -120,7 +166,26 @@ def generateModel(raw):
             representation.disks = generateDisks(dic)
         if exists(dic, "packages") and type(dic["packages"]) is list:
             representation.packages = generatePackages(dic)
+        if exists(dic, "users") and type(dic["users"]) is list:
+            representation.users = generateUsers(dic)
+        if exists(dic, "scripts") and type(dic["scripts"]) is list:
+            representation.scripts = generateScripts(dic)
     return representation
+
+
+def generateScripts(raw):
+    end = []
+    print(raw)
+    for pack in raw["scripts"]:
+        representation = script()
+        if existsDoubleKey(pack, "script", "name"):
+            representation.name = pack["script"]["name"]
+        if existsDoubleKey(pack, "script", "file"):
+            representation.file = pack["script"]["file"]
+        if existsDoubleKey(pack, "script", "command"):
+            representation.command = pack["script"]["command"]
+        end.append(representation)
+    return end
 
 
 def generateBootloader(raw):

@@ -40,6 +40,11 @@ models:
           package: # or a list in this format
             - a
             - b
+  - scripts:
+      - script:
+          name: "script1"
+          file: "test.sh"
+          command: "echo hello world"
 execution:
   - partitiontable: "/dev/sda" # build a partition table
   - format: "/dev/sda1" # format a partitoin
