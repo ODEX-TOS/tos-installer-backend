@@ -92,6 +92,6 @@ def format(part):
         return ["mkfs.fat -F32 {}".format(part.device)]
     elif part.filesystem == EFilesystem.SWAP:
         return ["mkswap {}".format(part.device)]
-    elif part.bIsEncrypted:
+    elif part.bIsEncrypted or part.filesystem == EFilesystem.LUKS:
         return handleEncryptedPartition(part)
     return None

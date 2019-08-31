@@ -337,7 +337,7 @@ def getStep(raw):
         return package
     if exists(raw, "script"):
         script = scriptstep()
-        script.reference = raw["name"]
+        script.reference = raw["script"]
         return script
     if exists(raw, "network"):
         nw = network()

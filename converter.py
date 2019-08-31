@@ -172,5 +172,5 @@ def genPartitions(parserPartitions, diskdevice):
     # TODO: Generate logic volumes here as well
     for i, part in enumerate(parserPartitions):
         partitions.append(partition.partition(diskdevice+str(i+1),
-                                              part.name, part.mount, part.filesystem, part.start, part.end, False))
+                                              part.name, part.mount, part.filesystem, part.start, part.end, part.bIsEncrypted, part.volumes))
     return partitions

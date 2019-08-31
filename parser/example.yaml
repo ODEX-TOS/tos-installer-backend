@@ -20,9 +20,19 @@ models:
           - partition:
               name: "root"
               mount: "/"
-              filesystem: "ext4"
+              filesystem: "luks"
               start: "8GiB"
               end: "100%"
+              encrypted: True
+              logicvolumes:
+                - volume:
+                  name: "root"
+                  size: "200G"
+                  mountpoint: "/"
+                - volume:
+                  name: "home"
+                  size: "200G"
+                  mountpoint: "/home"
   - chroots:
       - chroot:
           name: "alpha" # name of the user to chroot
@@ -58,6 +68,9 @@ models:
           name: "script1"
           file: "test.sh"
           command: "echo hello world"
+      - script:
+          name: "script2"
+          file: "show.sh"
   - network:
       ssid: "promisI"
       password: "54FEF1E6"
@@ -79,5 +92,5 @@ execution:
       user: "alpha"
       steps:
         - packages: "userpackages"
-  - script:
-    name: "script1"
+        - script: "script2"
+  - script: "script1"

@@ -43,3 +43,4 @@ class EFilesystem:
     BTRFS = "btrfs"
     FAT32 = "fat32"
     SWAP = "swap"
+    LUKS = "luks"

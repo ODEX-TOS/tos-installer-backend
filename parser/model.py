@@ -52,12 +52,31 @@ class partition:
         self.start = None
         self.end = None
         self.device = None
+        self.bIsEncrypted = False
+        self.volumes = [None]
 
     def __repr__(self):
         return self.__str__()
 
     def __str__(self):
-        return "\n\t\t\tpartition -- name: {} -- mount: {} -- filesystem: {} -- start: {} -- end: {} -- device: {}".format(self.name, self.mount, self.filesystem, self.start, self.end, self.device)
+        return "\n\t\t\tpartition -- name: {} -- mount: {} -- filesystem: {} -- start: {} -- end: {} -- device: {} -- encrypted {} -- volumes {}".format(self.name, self.mount, self.filesystem, self.start, self.end, self.device, self.bIsEncrypted, self.volumes)
+
+
+class logicVolume:
+    """
+    A representation of logicvolumes inside a volumegroup
+    """
+
+    def __init__(self):
+        self.name = None
+        self.size = None
+        self.mountpoint = None
+
+    def __repr__(self):
+        return self.__str__()
+
+    def __str__(self):
+        return "\n\t\t\t\tlogic volume -- name: {} -- size: {} -- mountpoint: {}".format(self.name, self.size, self.mountpoint)
 
 
 class chrootmodel:
@@ -260,6 +279,22 @@ def generatePartitions(raw):
             representation.start = pack["partition"]["start"]
         if existsDoubleKey(pack, "partition", "end"):
             representation.end = pack["partition"]["end"]
+        if existsDoubleKey(pack, "partition", "encrypted"):
+            representation.bIsEncrypted = pack["partition"]["encrypted"]
+        if existsDoubleKey(pack, "partition", "logicvolumes"):
+            representation.volumes = generateVolumes(
+                pack["partition"]["logicvolumes"])
+        end.append(representation)
+    return end
+
+
+def generateVolumes(raw):
+    end = []
+    for volume in raw:
+        representation = logicVolume()
+        representation.name = volume["name"]
+        representation.size = volume["size"]
+        representation.mountpoint = volume["mountpoint"]
         end.append(representation)
     return end
 
