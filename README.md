@@ -99,16 +99,16 @@ Here is the most basic configuration
 models:
 - disks:
       - disk:
-        device: "/dev/sda" # can also be /dev/disk/by-uuid or a command in the form $(command here)
-        size: "499G"
-        gpt: true # is the partitiontable gpt or msdos (by default gpt if not set)
-        partitions:
-          - partition:
-              name: "efi" # just a usefull name to assign a partitions
-              mount: "/boot/efi" # place to mount the partition
-              filesystem: "fat32" # type of filesystem as defined in model.models.partition.EFilesystem
-              start: "1MiB" # parted syntax for defining a location
-              end: "200MiB"
+          device: "/dev/sda" # can also be /dev/disk/by-uuid or a command in the form $(command here)
+          size: "499G"
+          gpt: true # is the partitiontable gpt or msdos (by default gpt if not set)
+          partitions:
+            - partition:
+                name: "efi" # just a usefull name to assign a partitions
+                mount: "/boot/efi" # place to mount the partition
+                filesystem: "fat32" # type of filesystem as defined in model.models.partition.EFilesystem
+                start: "1MiB" # parted syntax for defining a location
+                end: "200MiB"
 execution:
   - partitiontable: "/dev/sda" # build a partition table
 ```
@@ -149,38 +149,38 @@ Here is an example of all options and settings
 models:
   - disks:
       - disk:
-        device: "/dev/sda" # can also be /dev/disk/by-uuid or a command in the form $(command here)
-        size: "499G"
-        gpt: true # is the partitiontable gpt or msdos (by default gpt if not set)
-        partitions:
-          - partition:
-              name: "efi" # just a usefull name to assign a partitions
-              mount: "/boot/efi" # place to mount the partition
-              filesystem: "fat32" # type of filesystem as defined in model.models.partition.EFilesystem
-              start: "1MiB" # parted syntax for defining a location
-              end: "200MiB"
-          - partition:
-              name: "swap"
-              mount: "swap"
-              filesystem: "ext4"
-              start: "200MiB"
-              end: "8GiB"
-          - partition:
-              name: "root"
-              mount: "/"
-              filesystem: "luks"
-              start: "8GiB"
-              end: "100%"
-              encrypted: True
-              logicvolumes:
-                - volume:
-                  name: "root"
-                  size: "200G"
-                  mountpoint: "/"
-                - volume:
-                  name: "home"
-                  size: "200G"
-                  mountpoint: "/home"
+          device: "/dev/sda" # can also be /dev/disk/by-uuid or a command in the form $(command here)
+          size: "499G"
+          gpt: true # is the partitiontable gpt or msdos (by default gpt if not set)
+          partitions:
+            - partition:
+                name: "efi" # just a usefull name to assign a partitions
+                mount: "/boot/efi" # place to mount the partition
+                filesystem: "fat32" # type of filesystem as defined in model.models.partition.EFilesystem
+                start: "1MiB" # parted syntax for defining a location
+                end: "200MiB"
+            - partition:
+                name: "swap"
+                mount: "swap"
+                filesystem: "ext4"
+                start: "200MiB"
+                end: "8GiB"
+            - partition:
+                name: "root"
+                mount: "/"
+                filesystem: "luks"
+                start: "8GiB"
+                end: "100%"
+                encrypted: True
+                logicvolumes:
+                  - volume:
+                      name: "root"
+                      size: "200G"
+                      mountpoint: "/"
+                  - volume:
+                      name: "home"
+                      size: "200G"
+                      mountpoint: "/home"
   - chroots:
       - chroot:
           name: "alpha" # name of the user to chroot
