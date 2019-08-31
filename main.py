@@ -6,9 +6,11 @@ import parser.command as configs
 
 parser = argparse.ArgumentParser(
     description='Generate system calls for installing operating systems')
-parser.add_argument('-i', '--in', help='Input yaml file', default='')
+parser.add_argument('-i', '--in', help='Input yaml file', default='data.yaml')
 parser.add_argument(
     '-o', '--out', help='File to output generated script', default='')
+parser.add_argument(
+    '-c', '--config', help='Set a custom config script to load', default='config.yaml')
 
 args = vars(parser.parse_args())
 config = None
@@ -33,15 +35,15 @@ def parseToFile(fileIn, fileOut):
             f.write("%s\n" % item)
 
 
+def getConfig():
+    config = configs.parse(args["config"])
+    return config
+
+
 if __name__ == "__main__":
-    config = configs.parse("config.yaml")
-    if args["in"] != '':
-        if args["out"] != '':
-            parseToFile(args["in"], args["out"])
-        else:
-            parseToStdOut(args["in"])
+    config = getConfig()
+
+    if args["out"] != '':
+        parseToFile(args["in"], args["out"])
     else:
-        if args["out"] != '':
-            parseToFile("data.yaml", args["out"])
-        else:
-            parseToStdOut("data.yaml")
+        parseToStdOut(args["in"])
