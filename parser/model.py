@@ -251,6 +251,7 @@ def generateBootloader(raw):
 def generateDisks(raw):
     end = []
     for pack in raw["disks"]:
+        pack = pack["disk"]
         representation = disk()
         if exists(pack, "device"):
             representation.device = pack["device"]
