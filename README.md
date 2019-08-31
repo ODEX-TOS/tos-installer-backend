@@ -59,10 +59,11 @@ To get a local copy up and running follow these simple steps.
 
 ### Prerequisites
 
-All you need for the installer to function is python3
-```sh
-pacman -Syu python
-```
+All you need for the installer to function is 
+* python3
+* python-argparser(should be included in python3)
+* python-yaml
+
 
 ### Installation
 
@@ -71,22 +72,178 @@ pacman -Syu python
 git clone https:://github.com/ODEX-TOS/tos-installer-backend.git
 ```
 2. Install dependencies
-```sh
-pacman -Syu python3
+* python3
+* python-yaml
+* python-argparser
+
+3. supply a config file
+```bash
+python3 --in config.yaml # this will generate shell commands on stdout
+python3 --in config.yaml --out install.sh # this will generate a shell file with all the commands
 ```
-
-3. Launch "daemon"
-
-   ```bash
-   nohup python3 main.py &> /dev/null &
-   ```
 
    
 
 <!-- USAGE EXAMPLES -->
 ## Usage
 
-> This project is still very much a work in progress. Currently it is far from complete thus the usage can't fully be described yet
+> This explenation is a short version of everything you can do with this installer. If you want more information go to the wiki
+
+Our installer works with yaml. If you are unfamiliar with yaml I suggest you look it up.
+Our yaml file is divided into 2 sections called `models` and `execution`
+The model defines how your installation will look like (eg your disk layout, software to be installed etc)
+The execition is a sort of pipeline of steps the program will take during installation (eg first make the partitions then format them etc)
+Here is the most basic configuration
+
+```yaml
+models:
+- disks:
+      - disk:
+        device: "/dev/sda" # can also be /dev/disk/by-uuid or a command in the form $(command here)
+        size: "499G"
+        gpt: true # is the partitiontable gpt or msdos (by default gpt if not set)
+        partitions:
+          - partition:
+              name: "efi" # just a usefull name to assign a partitions
+              mount: "/boot/efi" # place to mount the partition
+              filesystem: "fat32" # type of filesystem as defined in model.models.partition.EFilesystem
+              start: "1MiB" # parted syntax for defining a location
+              end: "200MiB"
+execution:
+  - partitiontable: "/dev/sda" # build a partition table
+```
+
+The above will build a partition table with one entry. It will put the partition table on `/dev/sda` and it will contain one partition with (boot partition)
+
+Here is a short list of models you can define
+* `disk` - a drive containing partitions and possibly logic volumes (by default UEFI no MBR)
+* `chroot` - An environment to change root to (usefull to mimic a system)
+* `user` - A user on the system
+* `system` - General system specs (local, keymap, hostname etc)
+* `script` - A custom script that can be executed
+* `packages` - Software packages to be installed
+* `network` - Setting to connect to a network
+
+
+> Options and examples of these can be found in our [wiki](https://www.github.com/ODEX-TOS/tos-installer-backend/wiki
+
+Now we also have the execution step. Think of it as a build process. It will execute steps from top to bottom
+
+Here is a short list of build steps you can define
+* `partitiontable` - Build a partition table based on a disk
+* `format` - Format all partitions on a disk (or a single partition)
+* `mount` - Mount all partitions on a disk (or a single partition)
+* `network` - connect to a network if no connection exists yet
+* `bootstrap` - Bootstrap the system to a mountpoint
+* `fstab` - Build the fstab file
+* `script` - Execute a script
+* `chroot` - Change root to a mountpoint and execute steps there
+* `systemsetup` - Configure the base system
+* `createuser` - create a user
+* `bootloader` - Install a bootloader to the boot partition (currently only supports grub, you could make a script to replace this step)
+* `packages` - Install an array of packages
+
+Here is an example of all options and settings
+
+```yaml
+models:
+  - disks:
+      - disk:
+        device: "/dev/sda" # can also be /dev/disk/by-uuid or a command in the form $(command here)
+        size: "499G"
+        gpt: true # is the partitiontable gpt or msdos (by default gpt if not set)
+        partitions:
+          - partition:
+              name: "efi" # just a usefull name to assign a partitions
+              mount: "/boot/efi" # place to mount the partition
+              filesystem: "fat32" # type of filesystem as defined in model.models.partition.EFilesystem
+              start: "1MiB" # parted syntax for defining a location
+              end: "200MiB"
+          - partition:
+              name: "swap"
+              mount: "swap"
+              filesystem: "ext4"
+              start: "200MiB"
+              end: "8GiB"
+          - partition:
+              name: "root"
+              mount: "/"
+              filesystem: "luks"
+              start: "8GiB"
+              end: "100%"
+              encrypted: True
+              logicvolumes:
+                - volume:
+                  name: "root"
+                  size: "200G"
+                  mountpoint: "/"
+                - volume:
+                  name: "home"
+                  size: "200G"
+                  mountpoint: "/home"
+  - chroots:
+      - chroot:
+          name: "alpha" # name of the user to chroot
+          mount: "/media" # alternative mountpoint to chroot to
+      - chroot:
+          name: "root"
+  - users:
+      - user:
+          name: "alpha" # user by the name alpha
+          password: "123" # the password of said user
+      - user:
+          name: "zetta"
+          password: "456"
+          shell: "/bin/zsh" # default shell for the user
+          groups:
+            - wheel
+            - power
+  - system:
+      local: "en_US.UTF-8"
+      keymap: "be-latin1"
+      hostname: "tos"
+      password: "123"
+  - packages:
+      - package:
+          name: "userpackages"
+          packagefile: "packages.txt" # either from a file
+          package: # or a list in this format
+            - a
+            - b
+  - scripts:
+      # todo script should have a user an base command (/bin/sh)
+      - script:
+          name: "script1"
+          file: "test.sh"
+          command: "echo hello world"
+      - script:
+          name: "script2"
+          file: "show.sh"
+  - network:
+      ssid: "ssid"
+      password: "passphrase"
+execution:
+  - partitiontable: "/dev/sda" # build a partition table
+  - format: "/dev/sda" # format a drive
+  - format: "efi" # format partition based on its name
+  - mount: "/dev/sda" # mount all partitions from this drive you can also specify a partition
+  - network: # try to get a network connection if no connection already exists
+  - bootstrap: # bootstrap the system
+  - fstab: # generate fstab based on mounted partitions
+  - chroot:
+      user: "root" # execute the next steps in the chrooted environment
+      steps:
+        - systemsetup:
+        - createuser: "alpha"
+        - bootloader: "/dev/sda" # point to a disk model
+  - chroot:
+      user: "alpha"
+      steps:
+        - packages: "userpackages"
+        - script: "script1"
+  - script: "script1"
+```
+
 
 _For more examples, please refer to the [Documentation](https://www.github.com/ODEX-TOS/tos-installer-backend/wiki)_
 
