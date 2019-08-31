@@ -72,8 +72,8 @@ models:
           name: "script2"
           file: "show.sh"
   - network:
-      ssid: "promisI"
-      password: "54FEF1E6"
+      ssid: "ssid"
+      password: "passphrase"
 execution:
   - partitiontable: "/dev/sda" # build a partition table
   - format: "/dev/sda" # format a drive
