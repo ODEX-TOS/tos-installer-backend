@@ -58,11 +58,15 @@ models:
           name: "script1"
           file: "test.sh"
           command: "echo hello world"
+  - network:
+      ssid: "promisI"
+      password: "54FEF1E6"
 execution:
   - partitiontable: "/dev/sda" # build a partition table
   - format: "/dev/sda" # format a drive
   - format: "efi" # format partition based on its name
   - mount: "/dev/sda" # mount all partitions from this drive you can also specify a partition
+  - network: # try to get a network connection if no connection already exists
   - bootstrap: # bootstrap the system
   - fstab: # generate fstab based on mounted partitions
   - chroot:

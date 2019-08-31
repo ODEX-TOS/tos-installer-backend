@@ -16,9 +16,10 @@ class models:
         self.chroots = [None]
         self.users = [None]
         self.scripts = [None]
+        self.network = None
 
     def __str__(self):
-        return "model \n\tdisks: {}\n\tbootloader: {}\n\tsystem: {}\n\tpackages: {}\n\tchroots: {}\n\tusers: {}\n\tscripts: {}".format(self.disks, self.bootloader, self.system, self.packages, self.chroots, self.users, self.scripts)
+        return "model \n\tdisks: {}\n\tbootloader: {}\n\tsystem: {}\n\tpackages: {}\n\tchroots: {}\n\tusers: {}\n\tscripts: {}, \n\tnetwork: {}".format(self.disks, self.bootloader, self.system, self.packages, self.chroots, self.users, self.scripts, self.network)
 
 
 class disk:
@@ -159,6 +160,22 @@ class script:
         return "script -- name: {} -- file: {} -- command: {}".format(self.name, self.file, self.command)
 
 
+class network:
+    """
+    General information about your network
+    """
+
+    def __init__(self):
+        self.ssid = None
+        self.password = None
+
+    def __repr__(self):
+        return self.__str__()
+
+    def __str__(self):
+        return "network -- ssid: {} -- password: {}".format(self.ssid, self.password)
+
+
 def generateModel(raw):
     """
     generate a model from a raw yaml model
@@ -179,6 +196,15 @@ def generateModel(raw):
             representation.users = generateUsers(dic)
         if exists(dic, "scripts") and type(dic["scripts"]) is list:
             representation.scripts = generateScripts(dic)
+        if exists(dic, "network"):
+            representation.network = generateNetwork(dic["network"])
+    return representation
+
+
+def generateNetwork(raw):
+    representation = network()
+    representation.ssid = raw["ssid"]
+    representation.password = raw["password"]
     return representation
 
 

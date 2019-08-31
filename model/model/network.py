@@ -45,4 +45,11 @@ class Connector:
         self.bIsConnected = self.HasNetwork()
         return res
 
+    def getShellCommand(self, ssid, password, command=config.WIFI_CONNECT_COMMAND_WITH_PASSWORD):
+        commands = [
+            "if [[ $(ping -c1 1.1.1.1 | grep '0% packet loss') == '' ]]; then"]
+        commands.append("\t"+command.format(ssid, password))
+        commands.append("fi")
+        return commands
+
     # TODO: implement a ethernet connection interface eg for PPPoE

@@ -266,6 +266,23 @@ class scriptstep(modelSetter):
                 return
 
 
+class network(modelSetter):
+    """
+    The execution step called network
+    It tries to get a network connection
+    """
+
+    def __init__(self):
+        self.model = None
+        self.reference = None
+
+    def __str__(self):
+        return "network -- reference: {} -- model {}".format(self.reference, self.model).replace("\n", "\n\t\t")
+
+    def setModel(self, model):
+        self.model = model.network
+
+
 def generateExecution(raw):
     """
     generate a execution from a raw yaml model
@@ -322,6 +339,10 @@ def getStep(raw):
         script = scriptstep()
         script.reference = raw["name"]
         return script
+    if exists(raw, "network"):
+        nw = network()
+        nw.reference = raw["network"]
+        return nw
     if exists(raw, "chroot"):
         root = chroot()
         root.user = raw["chroot"]["user"]

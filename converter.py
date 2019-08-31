@@ -16,6 +16,7 @@ import model.model.user as user
 import system
 import model.build.user as userb
 import model.model.chroot as chroot
+import model.model.network as nw
 
 
 def concat(list1, list2):
@@ -54,9 +55,18 @@ def convertYamlToCommands(executor):
             commands = concat(commands, bootloaderGen(step))
         elif type(step) == type(execution.packages()):
             commands = concat(commands, packageGen(step))
+        elif type(step) == type(execution.network()):
+            commands == concat(commands, networkGen(step))
         else:
             print(step)
     return commands
+
+
+def networkGen(step):
+    """
+    If no network exists then we will try and connect to one
+    """
+    return concat(["\n#Establishing a network connection"], nw.Connector().getShellCommand(step.model.ssid, step.model.password))
 
 
 def systemGen(step):
