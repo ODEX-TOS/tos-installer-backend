@@ -78,7 +78,7 @@ def getBaseCommand(disk):
     return "parted --script '{}' ".format(disk.device)
 
 
-def format(part):
+def format(part, config):
     """
     format a partition based on the filesystem. 
     It returns a list of command to run
@@ -93,5 +93,5 @@ def format(part):
     elif part.filesystem == EFilesystem.SWAP:
         return ["mkswap {}".format(part.device)]
     elif part.bIsEncrypted or part.filesystem == EFilesystem.LUKS:
-        return handleEncryptedPartition(part)
+        return handleEncryptedPartition(part, config)
     return None

@@ -1,6 +1,5 @@
 
 # TODO: add logic volumes as a subtype of a partition
-import config
 
 
 class models:
@@ -84,8 +83,8 @@ class chrootmodel:
     A class as defined in the chroot part of the model.
     """
 
-    def __init__(self):
-        self.mountpoint = config.MOUNTPOINT
+    def __init__(self, config):
+        self.mountpoint = config["MOUNTPOINT"]
         self.name = None
 
     def __repr__(self):
@@ -100,11 +99,11 @@ class user:
     A class as defined in the user part of the model.
     """
 
-    def __init__(self):
+    def __init__(self, config):
         self.name = None
         self.password = None
-        self.shell = "/bin/bash"
-        self.groups = config.GROUPS
+        self.shell = config["DEFAULT_SHELL"]
+        self.groups = config["GROUPS"]
 
     def __repr__(self):
         return self.__str__()
@@ -130,11 +129,11 @@ class system:
     A class as defined in the chroot part of the model.
     """
 
-    def __init__(self):
-        self.local = config.LOCALE
-        self.keymap = config.KEYMAP
-        self.hostname = config.HOSTNAME
-        self.password = config.ROOT_PWD
+    def __init__(self, config):
+        self.local = config["LOCAL"]
+        self.keymap = config["KEYMAP"]
+        self.hostname = config["HOSTNAME"]
+        self.password = config["ROOT_PWD"]
 
     def __str__(self):
         return "local: {} -- keymap: {} -- hostname: {} -- password {}".format(self.local, self.keymap, self.hostname, self.password)
@@ -145,11 +144,11 @@ class package:
     A class as defined in the packages part of the model.
     """
 
-    def __init__(self):
+    def __init__(self, config):
         self.name = None
         self.file = None
         self.packages = None
-        self.install = config.INSTALLCOMMAND
+        self.install = config["INSTALLCOMMAND"]
 
     def __repr__(self):
         return self.__str__()
@@ -195,7 +194,7 @@ class network:
         return "network -- ssid: {} -- password: {}".format(self.ssid, self.password)
 
 
-def generateModel(raw):
+def generateModel(raw, config):
     """
     generate a model from a raw yaml model
     """
@@ -204,15 +203,15 @@ def generateModel(raw):
         if exists(dic, "bootloader"):
             representation.bootloader = generateBootloader(dic["bootloader"])
         if exists(dic, "system"):
-            representation.system = generateSystem(dic["system"])
+            representation.system = generateSystem(dic["system"], config)
         if exists(dic, "chroots") and type(dic["chroots"]) is list:
-            representation.chroots = generateChroots(dic)
+            representation.chroots = generateChroots(dic, config)
         if exists(dic, "disks") and type(dic["disks"]) is list:
             representation.disks = generateDisks(dic)
         if exists(dic, "packages") and type(dic["packages"]) is list:
-            representation.packages = generatePackages(dic)
+            representation.packages = generatePackages(dic, config)
         if exists(dic, "users") and type(dic["users"]) is list:
-            representation.users = generateUsers(dic)
+            representation.users = generateUsers(dic, config)
         if exists(dic, "scripts") and type(dic["scripts"]) is list:
             representation.scripts = generateScripts(dic)
         if exists(dic, "network"):
@@ -300,8 +299,8 @@ def generateVolumes(raw):
     return end
 
 
-def generateSystem(raw):
-    representation = system()
+def generateSystem(raw, config):
+    representation = system(config)
     if exists(raw, "hostname"):
         representation.hostname = raw["hostname"]
     if exists(raw, "keymap"):
@@ -314,10 +313,10 @@ def generateSystem(raw):
     return representation
 
 
-def generatePackages(raw):
+def generatePackages(raw, config):
     end = []
     for pack in raw["packages"]:
-        representation = package()
+        representation = package(config)
         if existsDoubleKey(pack, "package", "package"):
             representation.packages = pack["package"]["package"]
         if existsDoubleKey(pack, "package", "packagefile"):
@@ -328,10 +327,10 @@ def generatePackages(raw):
     return end
 
 
-def generateChroots(raw):
+def generateChroots(raw, config):
     end = []
     for pack in raw["chroots"]:
-        representation = chrootmodel()
+        representation = chrootmodel(config)
         if existsDoubleKey(pack, "chroot", "name"):
             representation.name = pack["chroot"]["name"]
         if existsDoubleKey(pack, "chroot", "mount"):
@@ -340,10 +339,10 @@ def generateChroots(raw):
     return end
 
 
-def generateUsers(raw):
+def generateUsers(raw, config):
     end = []
     for pack in raw["users"]:
-        representation = user()
+        representation = user(config)
         if existsDoubleKey(pack, "user", "name"):
             representation.name = pack["user"]["name"]
         if existsDoubleKey(pack, "user",  "password"):

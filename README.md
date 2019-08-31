@@ -244,6 +244,75 @@ execution:
   - script: "script1"
 ```
 
+If the generated commands are not correct (because your base system is not arch then you can change those default commands in a `config.yaml` file) The complete file is as followed
+
+```yaml
+INSTALLCOMMAND: "pacman -Syu --noconfirm" # command to install software
+
+IP: "8.8.8.8" # ip to check network connection
+WIFI_CONNECT_COMMAND: "wifi-menu" # command to interactivally connect to the network
+WIFI_CONNECT_COMMAND_WITH_PASSWORD: "nmcli device wifi connect '{}' password '{}'" # command to automaticaly connect to a network
+
+DEFAULT_SHELL: "/bin/bash" # default shell for new users
+USERADD: "useradd -m -p {} -g users -G {} -s {} {}" # command to add new users
+MOUNTPOINT: "/mnt" # default mountpoint
+
+# bootloader related commands
+BOOTLOADER_EFI: "grub-install --efi-directory /boot/efi --force {}"
+BOOTLOADER_DOS: "grub-install --root-directory=/boot {}"
+BOOTLOADER_CONFIG: "grub-mkconfig -o /boot/grub/grub.cfg"
+
+# system settings
+LOCAL: "en_US.UTF-8"
+KEYMAP: "be-latin1"
+HOSTNAME: "tos"
+ROOT_PWD: "123"
+
+CHROOT: "arch-chroot -u {} {}"
+
+# encryption command
+LUKS: "cryptsetup luksFormat -v -s 512 -h sha512 {}"
+LUKS_OPEN: "cryptsetup open {} luks_lvm"
+LUKS_NAME: "tos"
+LUKS_DEVICE: "/dev/mapper/luks_lvm"
+
+# fstab commands
+FSTAB: "genfstab -U -p /mnt > /mnt/etc/fstab"
+
+GROUPS:
+  - audio
+  - lp
+  - optical
+  - storage
+  - video
+  - wheel
+  - games
+  - power
+
+HERESTRING: "EOF"
+
+BOOTSTRAP: "pacstrap --noconfirm /mnt"
+
+BOOTSTRAP_PACKAGES:
+  - base
+  - base-devel
+  - efibootmgr
+  - vim
+  - dialog
+  - grub
+```
+
+> You can change each confing command to your liking. It will generate different bash scripts in the end. Note that you do not need to specify all different options For example you could do the following
+
+```yaml
+BOOTSTRAP: "pacstrap --noconfirm /mnt"
+FSTAB: "genfstab -U -p /mnt > /mnt/etc/fstab"
+CHROOT: "arch-chroot -u {} {}"
+INSTALLCOMMAND: "pacman -Syu --noconfirm" # command to install software
+```
+
+The above config file will only change those settings everything else will  change to their default values
+
 
 _For more examples, please refer to the [Documentation](https://www.github.com/ODEX-TOS/tos-installer-backend/wiki)_
 

@@ -6,7 +6,7 @@ import sys
 sys.path.append("...")  # set all imports to root imports
 
 
-def handleEncryptedPartition(part):
+def handleEncryptedPartition(part, config):
     """
     Convert a partition into a luks volume
     The volume is created from @volumes
@@ -14,21 +14,21 @@ def handleEncryptedPartition(part):
     The important parameters of @volumes is the mountpoint, name and size
     """
     command = ["modprobe dm-crypt", "modprobe dm-mod"]
-    command.append(config.LUKS.format(part.device))
-    command.append(config.LUKS_OPEN.format(part.device))
-    command.append("pvcreate " + config.LUKS_DEVICE)
-    command.append("vgcreate " + config.LUKS_DEVICE)
+    command.append(config["LUKS"].format(part.device))
+    command.append(config["LUKS_OPEN"].format(part.device))
+    command.append("pvcreate " + config["LUKS_DEVICE"])
+    command.append("vgcreate " + config["LUKS_DEVICE"])
     for volume in part.volumes:
         command.append(
-            "lvcreate -n {} -L {} {}".format(volume.name, volume.size, config.LUKS_NAME))
+            "lvcreate -n {} -L {} {}".format(volume.name, volume.size, config["LUKS_NAME"]))
     # add format command for volumes
     for volume in part.volumes:
-        command.append(formatVolume(volume.name, volume.mountpoint))
+        command.append(formatVolume(volume.name, volume.mountpoint, config))
     return command
 
 
 # TODO: make it possible to format different filesystems
 
 
-def formatVolume(name, mountpoint):
-    return "mkfs.ext4 -L {} {}".format(name, "/dev/mapper/{}-{}".format(config.LUKS_NAME, name))
+def formatVolume(name, mountpoint, config):
+    return "mkfs.ext4 -L {} {}".format(name, "/dev/mapper/{}-{}".format(config["LUKS_NAME"], name))

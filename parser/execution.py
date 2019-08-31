@@ -1,6 +1,3 @@
-import config
-
-
 class execution:
     """
     A class defined in the yaml file as executions
@@ -151,9 +148,9 @@ class chroot(modelSetter):
     It changes the root mountpoint and executes build steps there
     """
 
-    def __init__(self):
+    def __init__(self, config):
         self.user = None
-        self.mountpoint = config.MOUNTPOINT
+        self.mountpoint = config["MOUNTPOINT"]
         self.model = None
         self.steps = [None]
 
@@ -283,19 +280,19 @@ class network(modelSetter):
         self.model = model.network
 
 
-def generateExecution(raw):
+def generateExecution(raw, config):
     """
     generate a execution from a raw yaml model
     """
     steps = []
     for step in raw:
-        steps.append(getStep(step))
+        steps.append(getStep(step, config))
     executor = execution()
     executor.steps = steps
     return executor
 
 
-def getStep(raw):
+def getStep(raw, config):
     """
     Detect the type of the build step and generate a model from it
     """
@@ -344,13 +341,13 @@ def getStep(raw):
         nw.reference = raw["network"]
         return nw
     if exists(raw, "chroot"):
-        root = chroot()
+        root = chroot(config)
         root.user = raw["chroot"]["user"]
         if existsDoubleKey(raw, "chroot", "mountpoint"):
             root.mountpoint = raw["chroot"]["mountpoint"]
         root.steps = []
         for item in raw["chroot"]["steps"]:
-            root.steps.append(getStep(item))
+            root.steps.append(getStep(item, config))
         return root
     return raw
 

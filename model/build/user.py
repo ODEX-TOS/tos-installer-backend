@@ -1,20 +1,15 @@
-import config
 import crypt
 import os
 import sys
 sys.path.append("...")  # set all imports to root imports
 
 
-def makeUnixUser(user):
+def makeUnixUser(user, config):
     """
     return a list of commands needed to build the user
     """
     groups = listToString(user.groups)
-    return [config.USERADD.format(getEncryptedPassword(user.password), groups, user.shell, user.name)]
-
-
-def makeUnixUserHome(user):
-    return config.USER_HOME_BUILDER.format(user.name)
+    return [config["USERADD"].format(getEncryptedPassword(user.password), groups, user.shell, user.name)]
 
 
 def listToString(list, delimiter=" "):

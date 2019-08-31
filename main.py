@@ -1,7 +1,7 @@
 import argparse
-import config
 import parser.parse as parse
 from converter import convertYamlToCommands
+import parser.command as configs
 
 
 parser = argparse.ArgumentParser(
@@ -11,11 +11,12 @@ parser.add_argument(
     '-o', '--out', help='File to output generated script', default='')
 
 args = vars(parser.parse_args())
+config = None
 
 
 def parser(file):
-    parsed = parse.parse(file).execution
-    commands = convertYamlToCommands(parsed)
+    parsed = parse.parse(file, config).execution
+    commands = convertYamlToCommands(parsed, config)
     return commands
 
 
@@ -33,6 +34,7 @@ def parseToFile(fileIn, fileOut):
 
 
 if __name__ == "__main__":
+    config = configs.parse("config.yaml")
     if args["in"] != '':
         if args["out"] != '':
             parseToFile(args["in"], args["out"])
@@ -40,6 +42,6 @@ if __name__ == "__main__":
             parseToStdOut(args["in"])
     else:
         if args["out"] != '':
-            parseToFile("config.yaml", args["out"])
+            parseToFile("data.yaml", args["out"])
         else:
-            parseToStdOut("config.yaml")
+            parseToStdOut("data.yaml")

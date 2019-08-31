@@ -1,6 +1,3 @@
-import config
-
-
 import parser.execution as execution
 import parser.model as parsemodel
 import model.build.disk as tablebuilder
@@ -18,6 +15,8 @@ import model.build.user as userb
 import model.model.chroot as chroot
 import model.model.network as nw
 
+conf = None
+
 
 def concat(list1, list2):
     newList = list1
@@ -26,7 +25,7 @@ def concat(list1, list2):
     return newList
 
 
-def convertYamlToCommands(executor):
+def convertYamlToCommands(executor, config=None):
     """
     convert a parser.executor object to commands
     """
@@ -34,72 +33,76 @@ def convertYamlToCommands(executor):
     for step in executor.steps:
         # make partitiontable
         if type(step) == type(execution.partitiontable()):
-            commands = concat(commands, PartitionTableGen(step))
+            commands = concat(commands, PartitionTableGen(step, config))
         elif type(step) == type(execution.format()):
-            commands = concat(commands, formatGen(step))
+            commands = concat(commands, formatGen(step, config))
         elif type(step) == type(execution.mount()):
-            commands = concat(commands, mountGen(step))
+            commands = concat(commands, mountGen(step, config))
         elif type(step) == type(execution.bootstrap()):
-            commands = concat(commands, bootstrapGen(step))
+            commands = concat(commands, bootstrapGen(step, config))
         elif type(step) == type(execution.fstab()):
-            commands = concat(commands, fstabGen(step))
+            commands = concat(commands, fstabGen(step, config))
         elif type(step) == type(execution.scriptstep()):
-            commands = concat(commands, scriptGen(step))
-        elif type(step) == type(execution.chroot()):
-            commands = concat(commands, chrootGen(step))
+            commands = concat(commands, scriptGen(step, config))
+        elif type(step) == type(execution.chroot(config)):
+            commands = concat(commands, chrootGen(step, config))
         elif type(step) == type(execution.systemsetup()):
-            commands = concat(commands, systemGen(step))
+            commands = concat(commands, systemGen(step, config))
         elif type(step) == type(execution.createUser()):
-            commands = concat(commands, createUser(step))
+            commands = concat(commands, createUser(step, config))
         elif type(step) == type(execution.bootloaderstep()):
-            commands = concat(commands, bootloaderGen(step))
+            commands = concat(commands, bootloaderGen(step, config))
         elif type(step) == type(execution.packages()):
-            commands = concat(commands, packageGen(step))
+            commands = concat(commands, packageGen(step, config))
         elif type(step) == type(execution.network()):
-            commands == concat(commands, networkGen(step))
+            commands == concat(commands, networkGen(step, config))
         else:
             print(step)
     return commands
 
 
-def networkGen(step):
+def networkGen(step, config):
     """
     If no network exists then we will try and connect to one
     """
-    return concat(["\n#Establishing a network connection"], nw.Connector().getShellCommand(step.model.ssid, step.model.password))
+    return concat(["\n#Establishing a network connection"], nw.Connector().getShellCommand(step.model.ssid, step.model.password, config["WIFI_CONNECT_COMMAND_WITH_PASSWORD"], config))
 
 
-def systemGen(step):
+def systemGen(step, config):
     return concat(["\n# Setting up system parameters"], system.system(step.model.local, step.model.keymap,
                                                                       step.model.hostname, step.model.password).setup())
 
 
-def createUser(step):
+def createUser(step, config):
     usr = user.user(step.model.name, step.model.password,
                     step.model.groups, step.model.shell)
-    return concat(["\n# Creating a user"], userb.makeUnixUser(usr))
+    return concat(["\n# Creating a user"], userb.makeUnixUser(usr, config))
 
 
-def bootloaderGen(step):
+def bootloaderGen(step, config):
     return concat(["\n# Generating the bootloader"], script.bootloader(shell="",
-                                                                       device=step.model.device, bIsGPT=step.model.gpt).exec())
+                                                                       device=step.model.device,
+                                                                       installcommand=config["BOOTLOADER_EFI"],
+                                                                       installDOSCommand=config["BOOTLOADER_DOS"],
+                                                                       configcommand=config["BOOTLOADER_CONFIG"],
+                                                                       bIsGPT=step.model.gpt).exec())
 
 
-def packageGen(step):
+def packageGen(step, config):
     if step.model.file != None:
         return concat(["\n# Installing software"], swb.installSoftware(swg.BuildSoftwareFromFile(step.model.file, step.model.install)))
     return concat(["\n# Installing software"], swb.installSoftware(sw.software(step.model.install, step.model.packages)))
 
 
-def chrootGen(step):
+def chrootGen(step, config):
     """
     Build chroot command from a parser.executor.chroot object
     """
-    commands = convertYamlToCommands(step)
-    return concat(["\n# Executing chroot function"], chroot.chroot(user=step.user, mountpoint=step.mountpoint).start(command=commands))
+    commands = convertYamlToCommands(step, config)
+    return concat(["\n# Executing chroot function"], chroot.chroot(chrootfunc=config["CHROOT"], user=step.user, mountpoint=step.mountpoint).start(command=commands, herefile=config["HERESTRING"]))
 
 
-def scriptGen(step):
+def scriptGen(step, config):
     """
     Generate a script command from a parser.executor.script
     """
@@ -109,62 +112,60 @@ def scriptGen(step):
         return concat(["\n# Executing custom script"], script.script(shell="", payload=stream.read()).exec())
 
 
-# Todo: don't hardcode these values -> move to config
-
-
-def bootstrapGen(step):
+def bootstrapGen(step, config):
     """
     Bootstrap the system on a drive
     """
-    return concat(["\n#bootstrapping system"], swb.installSoftware(sw.software("pacstrap --noconfirm /mnt", packages=[
-        "base", "base-devel", "efibootmgr", "vim", "dialog", "xterm", "grub"])))
+    return concat(["\n#bootstrapping system"], swb.installSoftware(sw.software(config["BOOTSTRAP"], packages=config["BOOTSTRAP_PACKAGES"])))
 
 
-def fstabGen(step):
-    return ["\n# Generate fstab", config.FSTAB]
+def fstabGen(step, config):
+    return ["\n# Generate fstab", config["FSTAB"]]
 
 
-def mountGen(mounter):
+def mountGen(mounter, config):
     """
     Generate mount commands from a parser.executor.mount object
     """
     commands = ["\n#Mounting partitions"]
     if type(mounter.model) == type(parsemodel.disk()):
         partitions = genPartitions(
-            mounter.model.partitions, mounter.model.device)
+            mounter.model.partitions, mounter.model.device, config)
     else:
-        partitions = genPartitions([mounter.model], mounter.model.device)
-    commands = concat(commands, mb.mountAll(partitions))
+        partitions = genPartitions(
+            [mounter.model], mounter.model.device, config)
+    commands = concat(commands, mb.mountAll(partitions, config["MOUNTPOINT"]))
 
     return commands
 
 
-def formatGen(formater):
+def formatGen(formater, config):
     """
     Generate format commands from a parser.executor.format object
     """
     commands = ["\n#Formating partitions"]
     if type(formater.model) == type(parsemodel.disk()):
         partitions = genPartitions(
-            formater.model.partitions, formater.model.device)
+            formater.model.partitions, formater.model.device, config)
     else:
-        partitions = genPartitions([formater.model], formater.model.device)
+        partitions = genPartitions(
+            [formater.model], formater.model.device, config)
     for part in partitions:
-        commands = concat(commands, pb.format(part))
+        commands = concat(commands, pb.format(part, config))
     return commands
 
 
-def PartitionTableGen(ptable):
+def PartitionTableGen(ptable, config):
     """
     Convert a partitiontable gen step to a list of commands
     """
     model = ptable.model
     table = tablemodel.disk(model.device, model.size,
-                            genPartitions(model.partitions, model.device), model.gpt)
+                            genPartitions(model.partitions, model.device, config), model.gpt)
     return concat(["\n#Building partition table"], tablebuilder.buildPartitionTable(table))
 
 
-def genPartitions(parserPartitions, diskdevice):
+def genPartitions(parserPartitions, diskdevice, config):
     """
     generate a list of model partition from a parser partition model
     """

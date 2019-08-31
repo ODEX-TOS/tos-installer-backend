@@ -4,13 +4,14 @@ import parser.model as model
 import parser.execution as execution
 
 
-def generate(raw):
+def generate(raw, config):
     """
     Convert raw yaml convertion to a class based representation
     """
     representation = yamlfile.file()
-    representation.model = model.generateModel(raw["models"])
-    representation.execution = execution.generateExecution(raw["execution"])
+    representation.model = model.generateModel(raw["models"], config)
+    representation.execution = execution.generateExecution(
+        raw["execution"], config)
     return representation
 
 
@@ -21,19 +22,19 @@ def modelLinker(file):
     """
     for executor in file.execution.steps:
         executor.setModel(file.model)
-        if type(executor) == type(execution.chroot()):
+        if type(executor) == type(execution.chroot({"MOUNTPOINT": ""})):
             for step in executor.steps:
                 step.setModel(file.model)
     return file
 
 
-def parse(filename):
+def parse(filename, config):
     with open(filename, 'r') as stream:
         try:
             content = yaml.load(stream, Loader=yaml.Loader)
         except yaml.YAMLError as exc:
             print(exc)
-    return modelLinker(generate(content))
+    return modelLinker(generate(content, config))
 
 
 if __name__ == "__main__":

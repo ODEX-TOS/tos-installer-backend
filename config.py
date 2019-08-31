@@ -6,13 +6,6 @@
 INSTALLCOMMAND = "pacman -Syu --noconfirm"
 
 
-# These AUR configurations are only needed for arch linux based systems
-AURHELPER = "https://aur.archlinux.org/yay.git"
-AURHELPERDIR = "yay"
-
-# Packagename for git on your distro
-GITPACKAGE = "git"
-
 # IP to check if network is working
 IP = "8.8.8.8"
 
@@ -63,3 +56,10 @@ LUKS_DEVICE = "/dev/mapper/luks_lvm"  # luks_lvm must be the same as LUKS_OPEN
 
 # fstab generator
 FSTAB = "genfstab -U -p {} > {}/etc/fstab".format(MOUNTPOINT, MOUNTPOINT)
+
+HERESTRING = "EOF"
+
+BOOTSTRAP = "pacstrap --noconfirm /mnt"
+
+BOOTSTRAP_PACKAGES = ["base", "base-devel",
+                      "efibootmgr", "vim", "dialog", "grub"]

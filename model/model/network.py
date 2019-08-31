@@ -45,9 +45,9 @@ class Connector:
         self.bIsConnected = self.HasNetwork()
         return res
 
-    def getShellCommand(self, ssid, password, command=config.WIFI_CONNECT_COMMAND_WITH_PASSWORD):
+    def getShellCommand(self, ssid, password, command=config.WIFI_CONNECT_COMMAND_WITH_PASSWORD, config):
         commands = [
-            "if [[ $(ping -c1 1.1.1.1 | grep '0% packet loss') == '' ]]; then"]
+            "if [[ $(ping -c1 {} | grep '0% packet loss') == '' ]]; then".format(config["IP"])]
         commands.append("\t"+command.format(ssid, password))
         commands.append("fi")
         return commands
