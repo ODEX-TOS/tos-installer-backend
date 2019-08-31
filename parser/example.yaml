@@ -26,13 +26,13 @@ models:
               encrypted: True
               logicvolumes:
                 - volume:
-                  name: "root"
-                  size: "200G"
-                  mountpoint: "/"
+                    name: "root"
+                    size: "200G"
+                    mountpoint: "/"
                 - volume:
-                  name: "home"
-                  size: "200G"
-                  mountpoint: "/home"
+                    name: "home"
+                    size: "200G"
+                    mountpoint: "/home"
   - chroots:
       - chroot:
           name: "alpha" # name of the user to chroot
@@ -72,8 +72,8 @@ models:
           name: "script2"
           file: "show.sh"
   - network:
-      ssid: "promisI"
-      password: "54FEF1E6"
+      ssid: "ssid"
+      password: "passphrase"
 execution:
   - partitiontable: "/dev/sda" # build a partition table
   - format: "/dev/sda" # format a drive

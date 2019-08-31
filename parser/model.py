@@ -292,9 +292,9 @@ def generateVolumes(raw):
     end = []
     for volume in raw:
         representation = logicVolume()
-        representation.name = volume["name"]
-        representation.size = volume["size"]
-        representation.mountpoint = volume["mountpoint"]
+        representation.name = volume["volume"]["name"]
+        representation.size = volume["volume"]["size"]
+        representation.mountpoint = volume["volume"]["mountpoint"]
         end.append(representation)
     return end
 
