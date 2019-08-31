@@ -10,7 +10,12 @@ import model.build.partition as pb
 import model.build.mount as mb
 import model.model.software as sw
 import model.build.software as swb
+import model.gen.software as swg
 import model.model.script as script
+import model.model.user as user
+import system
+import model.build.user as userb
+import model.model.chroot as chroot
 
 
 def concat(list1, list2):
@@ -40,19 +45,48 @@ def convertYamlToCommands(executor):
         elif type(step) == type(execution.scriptstep()):
             commands = concat(commands, scriptGen(step))
         elif type(step) == type(execution.chroot()):
-            command = concat(commands, chrootGen(step))
+            commands = concat(commands, chrootGen(step))
+        elif type(step) == type(execution.systemsetup()):
+            commands = concat(commands, systemGen(step))
+        elif type(step) == type(execution.createUser()):
+            commands = concat(commands, createUser(step))
+        elif type(step) == type(execution.bootloaderstep()):
+            commands = concat(commands, bootloaderGen(step))
+        elif type(step) == type(execution.packages()):
+            commands = concat(commands, packageGen(step))
         else:
             print(step)
     return commands
 
-# TODO: implement recursive chroot step generator
+
+def systemGen(step):
+    return concat(["\n# Setting up system parameters"], system.system(step.model.local, step.model.keymap,
+                                                                      step.model.hostname, step.model.password).setup())
+
+
+def createUser(step):
+    usr = user.user(step.model.name, step.model.password,
+                    step.model.groups, step.model.shell)
+    return concat(["\n# Creating a user"], userb.makeUnixUser(usr))
+
+
+def bootloaderGen(step):
+    return concat(["\n# Generating the bootloader"], script.bootloader(shell="",
+                                                                       device=step.model.device, bIsGPT=step.model.gpt).exec())
+
+
+def packageGen(step):
+    if step.model.file != None:
+        return concat(["\n# Installing software"], swb.installSoftware(swg.BuildSoftwareFromFile(step.model.file, step.model.install)))
+    return concat(["\n# Installing software"], swb.installSoftware(sw.software(step.model.install, step.model.packages)))
 
 
 def chrootGen(step):
     """
     Build chroot command from a parser.executor.chroot object
     """
-    return []
+    commands = convertYamlToCommands(step)
+    return concat(["\n# Executing chroot function"], chroot.chroot(user=step.user, mountpoint=step.mountpoint).start(command=commands))
 
 
 def scriptGen(step):

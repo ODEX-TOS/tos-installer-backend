@@ -1,3 +1,5 @@
+import config
+
 
 class execution:
     """
@@ -151,6 +153,7 @@ class chroot(modelSetter):
 
     def __init__(self):
         self.user = None
+        self.mountpoint = config.MOUNTPOINT
         self.model = None
         self.steps = [None]
 
@@ -158,7 +161,7 @@ class chroot(modelSetter):
         steps = ""
         for step in self.steps:
             steps += "\t\t\t\t{}\n".format(step)
-        return "chroot -- user: {} -- steps: \n{} \t\t\t-- model: {}".format(self.user, steps, str(self.model).replace("\n", "\n\t\t"))
+        return "chroot -- user: {} -- mountpoint {} -- steps: \n{} \t\t\t-- model: {}".format(self.user, self.mountpoint, steps, str(self.model).replace("\n", "\n\t\t"))
 
     def setModel(self, model):
         for root in model.chroots:
@@ -197,6 +200,12 @@ class createUser(modelSetter):
     def __str__(self):
         return "user -- reference: {} -- model {}".format(self.reference, self.model).replace("\n", "\n\t\t")
 
+    def setModel(self, model):
+        for user in model.users:
+            if self.reference == user.name:
+                self.model = user
+                return
+
 
 class bootloaderstep(modelSetter):
     """
@@ -212,7 +221,9 @@ class bootloaderstep(modelSetter):
         return "bootloader -- reference: {} -- model {}".format(self.reference, self.model).replace("\n", "\n\t\t")
 
     def setModel(self, model):
-        self.model = model.bootloader
+        for disk in model.disks:
+            if disk.device == self.reference:
+                self.model = disk
 
 
 class packages(modelSetter):
@@ -314,6 +325,8 @@ def getStep(raw):
     if exists(raw, "chroot"):
         root = chroot()
         root.user = raw["chroot"]["user"]
+        if existsDoubleKey(raw, "chroot", "mountpoint"):
+            root.mountpoint = raw["chroot"]["mountpoint"]
         root.steps = []
         for item in raw["chroot"]["steps"]:
             root.steps.append(getStep(item))

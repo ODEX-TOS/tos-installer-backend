@@ -40,9 +40,6 @@ models:
           groups:
             - wheel
             - power
-
-  - bootloader:
-      device: "/dev/sda"
   - system:
       local: "en_US.UTF-8"
       keymap: "be-latin1"
@@ -73,7 +70,7 @@ execution:
       steps:
         - systemsetup:
         - createuser: "alpha"
-        - bootloader:
+        - bootloader: "/dev/sda" # point to a disk model
   - chroot:
       user: "alpha"
       steps:

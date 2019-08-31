@@ -1,5 +1,6 @@
 
 # TODO: add logic volumes as a subtype of a partition
+import config
 
 
 class models:
@@ -64,7 +65,7 @@ class chrootmodel:
     """
 
     def __init__(self):
-        self.mountpoint = "/mnt"
+        self.mountpoint = config.MOUNTPOINT
         self.name = None
 
     def __repr__(self):
@@ -83,7 +84,7 @@ class user:
         self.name = None
         self.password = None
         self.shell = "/bin/bash"
-        self.groups = None
+        self.groups = config.GROUPS
 
     def __repr__(self):
         return self.__str__()
@@ -110,10 +111,10 @@ class system:
     """
 
     def __init__(self):
-        self.local = None
-        self.keymap = None
-        self.hostname = None
-        self.password = None
+        self.local = config.LOCALE
+        self.keymap = config.KEYMAP
+        self.hostname = config.HOSTNAME
+        self.password = config.ROOT_PWD
 
     def __str__(self):
         return "local: {} -- keymap: {} -- hostname: {} -- password {}".format(self.local, self.keymap, self.hostname, self.password)
@@ -128,12 +129,13 @@ class package:
         self.name = None
         self.file = None
         self.packages = None
+        self.install = config.INSTALLCOMMAND
 
     def __repr__(self):
         return self.__str__()
 
     def __str__(self):
-        return "\n\t\tpackage -- name: {} -- file: {} -- packages: {}".format(self.name, self.file, self.packages)
+        return "\n\t\tpackage -- name: {} --install: {} -- file: {} -- packages: {}".format(self.name, self.install, self.file, self.packages)
 
 
 class script:

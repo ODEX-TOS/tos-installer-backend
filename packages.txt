@@ -1,0 +1,6 @@
+linux
+grep
+vim
+linux-tos
+sudo
+nano
