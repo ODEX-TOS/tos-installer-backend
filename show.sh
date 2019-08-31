@@ -38,7 +38,7 @@ swapon -s
 
 #Establishing a network connection
 if [[ $(ping -c1 1.1.1.1 | grep '0% packet loss') == '' ]]; then
-	nmcli device wifi connect 'promisI' password '54FEF1E6'
+	nmcli device wifi connect 'ssid' password 'passphrase'
 fi
 
 #bootstrapping system
@@ -82,8 +82,12 @@ pacman -Syu --noconfirm linux grep vim linux-tos sudo nano
 
 # Executing custom script
  echo hello world
+echo hello 2
+
 
 EOF
 
 # Executing custom script
  echo hello world
+echo hello 2
+

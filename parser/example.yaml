@@ -67,7 +67,9 @@ models:
       - script:
           name: "script1"
           file: "test.sh"
-          command: "echo hello world"
+          command: |
+            echo hello world
+            echo hello 2
       - script:
           name: "script2"
           file: "show.sh"
