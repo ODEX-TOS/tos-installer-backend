@@ -92,5 +92,5 @@ execution:
       user: "alpha"
       steps:
         - packages: "userpackages"
-        - script: "script2"
+        - script: "script1"
   - script: "script1"

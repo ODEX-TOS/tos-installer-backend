@@ -80,7 +80,10 @@ arch-chroot -u alpha /mnt <<<EOF
 # Installing software
 pacman -Syu --noconfirm linux grep vim linux-tos sudo nano 
 
+# Executing custom script
+ echo hello world
+
 EOF
 
 # Executing custom script
- echo this is a script inside a script
+ echo hello world
