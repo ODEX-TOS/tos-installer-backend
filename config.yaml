@@ -42,7 +42,7 @@ GROUPS:
 
 HERESTRING: "EOF"
 
-BOOTSTRAP: "pacstrap --noconfirm /mnt"
+BOOTSTRAP: "pacstrap /mnt {} --noconfirm"
 
 BOOTSTRAP_PACKAGES:
   - base

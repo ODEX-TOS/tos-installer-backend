@@ -11,4 +11,6 @@ def installSoftware(software):
     packagelist = ""
     for package in software.packages:
         packagelist += package + " "
+    if "{}" in software.installer:
+        return [software.installer.format(packagelist)]
     return [software.installer + " " + packagelist]

@@ -85,13 +85,13 @@ def format(part, config):
     If no matching filesystem was found we return None
     """
     if part.filesystem == EFilesystem.EXT4:
-        return ["mkfs.ext4 {}".format(part.device)]
+        return ["mkfs.ext4 -F {}".format(part.device)]
     elif part.filesystem == EFilesystem.BTRFS:
-        return ["mkfs.btrfs {}".format(part.device)]
+        return ["mkfs.btrfs -f {}".format(part.device)]
     elif part.filesystem == EFilesystem.FAT32:
-        return ["mkfs.fat -F32 {}".format(part.device)]
+        return ["mkfs.fat -I -F32 {}".format(part.device)]
     elif part.filesystem == EFilesystem.SWAP:
-        return ["mkswap {}".format(part.device)]
+        return ["mkswap -f {}".format(part.device)]
     elif part.bIsEncrypted or part.filesystem == EFilesystem.LUKS:
         return handleEncryptedPartition(part, config)
     return None
