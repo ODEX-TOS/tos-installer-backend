@@ -45,7 +45,7 @@ ROOT_PWD = "123"
 
 
 # chroot command
-CHROOT = "arch-chroot -u {} {}"
+CHROOT = "cat | arch-chroot -u {} {}"
 
 
 # Logic volume/encryption
@@ -59,7 +59,7 @@ FSTAB = "genfstab -U -p {} > {}/etc/fstab".format(MOUNTPOINT, MOUNTPOINT)
 
 HERESTRING = "EOF"
 
-BOOTSTRAP = "pacstrap --noconfirm /mnt"
+BOOTSTRAP = "pacstrap /mnt {} --noconfirm"
 
 BOOTSTRAP_PACKAGES = ["base", "base-devel",
                       "efibootmgr", "vim", "dialog", "grub"]

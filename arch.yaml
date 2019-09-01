@@ -1,0 +1,47 @@
+# This is an example arch installation
+# It is the most basic install you can have
+# It only has a root and boot partition
+# Edit every line with a comment to reflect your system
+models:
+  - disks:
+      - disk:
+          device: "/dev/sda" # set your disk to install arch onf (verify with fdisk -l)
+          size: "499G" # set the size of your disk as per (fdisk -l)
+          gpt: false
+          partitions:
+            - partition:
+                name: "boot"
+                mount: "/boot"
+                filesystem: "ext4"
+                start: "1MiB"
+                end: "200MiB"
+            - partition:
+                name: "root"
+                mount: "/"
+                filesystem: "ext4"
+                start: "200MiB"
+                end: "100%"
+  - chroots:
+      - chroot:
+          name: "root"
+  - users:
+      - user:
+          name: "alpha" # set your username
+          password: "123" # set its password
+  - system:
+      local: "en_US.UTF-8" # change the language of your system (a list is found in /etc/locale.gen)
+      keymap: "be-latin1" # set your keymap
+      hostname: "arch" # the hostname of your system
+      password: "123" # the root password
+execution:
+  - partitiontable: "/dev/sda" # device name of your disk
+  - format: "/dev/sda" # device name of your disk
+  - mount: "/dev/sda" # device name of your disk
+  - bootstrap:
+  - fstab:
+  - chroot:
+      user: "root"
+      steps:
+        - systemsetup:
+        - createuser: "alpha" # set this to the name of your user
+        - bootloader: "/dev/sda" # device name of your disk
