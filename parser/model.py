@@ -52,13 +52,14 @@ class partition:
         self.end = None
         self.device = None
         self.bIsEncrypted = False
+        self.password = ""  # the encryption password
         self.volumes = [None]
 
     def __repr__(self):
         return self.__str__()
 
     def __str__(self):
-        return "\n\t\t\tpartition -- name: {} -- mount: {} -- filesystem: {} -- start: {} -- end: {} -- device: {} -- encrypted {} -- volumes {}".format(self.name, self.mount, self.filesystem, self.start, self.end, self.device, self.bIsEncrypted, self.volumes)
+        return "\n\t\t\tpartition -- name: {} -- mount: {} -- filesystem: {} -- start: {} -- end: {} -- device: {} -- encrypted {} -- password {} -- volumes {}".format(self.name, self.mount, self.filesystem, self.start, self.end, self.device, self.bIsEncrypted, self.password, self.volumes)
 
 
 class logicVolume:
@@ -281,6 +282,8 @@ def generatePartitions(raw):
             representation.end = pack["partition"]["end"]
         if existsDoubleKey(pack, "partition", "encrypted"):
             representation.bIsEncrypted = pack["partition"]["encrypted"]
+        if existsDoubleKey(pack, "partition", "password"):
+            representation.password = pack["partition"]["password"]
         if existsDoubleKey(pack, "partition", "logicvolumes"):
             representation.volumes = generateVolumes(
                 pack["partition"]["logicvolumes"])

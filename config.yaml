@@ -22,8 +22,8 @@ ROOT_PWD: "123"
 CHROOT: "arch-chroot -u {} {}"
 
 # encryption command
-LUKS: "cryptsetup luksFormat -v -s 512 -h sha512 {}"
-LUKS_OPEN: "cryptsetup open {} luks_lvm"
+LUKS: "cryptsetup luksFormat -v -s 512 -h sha512 {} -d -"
+LUKS_OPEN: "cryptsetup open {} luks_lvm -d -"
 LUKS_NAME: "tos"
 LUKS_DEVICE: "/dev/mapper/luks_lvm"
 

@@ -24,6 +24,7 @@ models:
                 start: "8GiB"
                 end: "100%"
                 encrypted: True
+                password: "a"
                 logicvolumes:
                   - volume:
                       name: "root"
