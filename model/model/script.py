@@ -31,19 +31,26 @@ class bootloader:
     Object holding all information for writing a bootloader to a boot partition
     """
 
-    def __init__(self, shell="/bin/sh -c", device="/dev/sda", installcommand=config.BOOTLOADER_EFI, installDOSCommand=config.BOOTLOADER_DOS, configcommand=config.BOOTLOADER_CONFIG, bIsGPT=True):
+    def __init__(self, shell="/bin/sh -c", device="/dev/sda", installcommand=config.BOOTLOADER_EFI, installDOSCommand=config.BOOTLOADER_DOS, configcommand=config.BOOTLOADER_CONFIG, bIsGPT=True, bIsEncrypted=False, kernel="linux"):
         self.shell = shell
         self.installCommand = installcommand
         self.installDOSCommand = installDOSCommand
         self.configCommand = configcommand
         self.bIsGPT = bIsGPT
         self.device = device
+        self.bIsEncrypted = bIsEncrypted
+        self.kernel = kernel
 
     def exec(self):
         """
         Write a bootloader to the boot partition
         """
         commands = []
+        if self.bIsEncrypted:
+            commands.append(
+                self.shell + "sed -i 's:HOOKS=(\(.*\)):HOOKS=(\\1 encrypt):' /etc/mkinitcpio.conf")
+        commands.append(
+            self.shell + "mkinitcpio -p {}".format(self.kernel[0]))
         if self.bIsGPT:
             commands.append(
                 self.shell + "{}".format(self.installCommand).format(self.device))

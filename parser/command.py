@@ -65,7 +65,8 @@ def populateMissingPieces(content):
 
     if not exists(content, "BOOTSTRAP_PACKAGES"):
         content["BOOTSTRAP_PACKAGES"] = config.BOOTSTRAP_PACKAGES
-
+    if not exists(content, "KERNEL"):
+        content["KERNEL"] = config.KERNEL
     return content
 
 

@@ -10,7 +10,7 @@ MOUNTPOINT: "/mnt" # default mountpoint
 
 # bootloader related commands
 BOOTLOADER_EFI: "grub-install --efi-directory /boot/efi --force {}"
-BOOTLOADER_DOS: "grub-install --root-directory=/boot {}"
+BOOTLOADER_DOS: "grub-install {}"
 BOOTLOADER_CONFIG: "grub-mkconfig -o /boot/grub/grub.cfg"
 
 # system settings

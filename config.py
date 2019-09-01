@@ -34,7 +34,7 @@ MOUNTPOINT = "/mnt"
 
 # Install command for the bootloader
 BOOTLOADER_EFI = "grub-install --efi-directory /boot/efi --force {}"
-BOOTLOADER_DOS = "grub-install --root-directory=/boot {}"
+BOOTLOADER_DOS = "grub-install {}"
 BOOTLOADER_CONFIG = "grub-mkconfig -o /boot/grub/grub.cfg"
 
 # default system setting
@@ -63,3 +63,6 @@ BOOTSTRAP = "pacstrap /mnt {} --noconfirm"
 
 BOOTSTRAP_PACKAGES = ["base", "base-devel",
                       "efibootmgr", "vim", "dialog", "grub"]
+
+# the kernel or kernels to install it should be a list
+KERNEL = ["linux"]

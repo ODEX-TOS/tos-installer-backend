@@ -1,5 +1,7 @@
 import shell
 import config
+import model.build.software as swb
+import model.model.software as sw
 # TODO: add localtime generator
 # shell command is as followed ln -sf /usr/share/zoneinfo/"$continent"/"$capital" /etc/localtime
 # where $continent is in  /usr/share/zoneinfo/*
@@ -13,7 +15,7 @@ class system:
         self.hostname = hostname
         self.password_root = password_root
 
-    def setup(self):
+    def setup(self, config):
         commands = [
             "timedatectl set-ntp true",
             "hwclock --systohc",
@@ -26,12 +28,23 @@ class system:
             "echo -e '127.0.0.1   localhost\n::1      localhost\n127.0.1.1    {}.localdomain  {}' > /etc/hosts".format(
                 self.hostname, self.hostname),
             "echo '{}' | passwd".format(self.password_root),
-            "echo '%wheel ALL=(ALL) NOPASSWD: ALL' >> /etc/sudoers"
+            "echo '%wheel ALL=(ALL) NOPASSWD: ALL' >> /etc/sudoers",
         ]
+        # installing kernel
+        commands = concat(commands, swb.installSoftware(sw.software(
+            config["INSTALLCOMMAND"], packages=config["KERNEL"])))
         return commands
 
 
+def concat(list1, list2):
+    newList = list1
+    for item in list2:
+        newList.append(item)
+    return newList
+
 # TODO: return all locals
+
+
 def getAllLocals():
     return
 

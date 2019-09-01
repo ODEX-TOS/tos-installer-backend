@@ -1,45 +1,20 @@
 
 #Building partition table
-parted --script '/dev/sda' mklabel gpt
-parted --script '/dev/sda' mkpart ESP fat32 1MiB 200MiB
+parted --script '/dev/sda' mklabel msdos
+parted --script '/dev/sda' mkpart primary 1MiB 200MiB
 parted --script '/dev/sda' set 1 boot on
-parted --script '/dev/sda' name 1 efi
-parted --script '/dev/sda' mkpart primary 200MiB 8GiB
-parted --script '/dev/sda' name 2 swap
-parted --script '/dev/sda' mkpart primary 8GiB 100%
-parted --script '/dev/sda' set 3 lvm on
-parted --script '/dev/sda' name 3 root
+parted --script '/dev/sda' name 1 boot
+parted --script '/dev/sda' mkpart primary 200MiB 100%
+parted --script '/dev/sda' name 2 root
 
 #Formating partitions
-mkfs.fat -I -F32 /dev/sda1
+mkfs.ext4 -F /dev/sda1
 mkfs.ext4 -F /dev/sda2
-modprobe dm-crypt
-modprobe dm-mod
-cryptsetup luksFormat -v -s 512 -h sha512 /dev/sda3
-cryptsetup open /dev/sda3 luks_lvm
-pvcreate /dev/mapper/luks_lvm
-vgcreate /dev/mapper/luks_lvm
-lvcreate -n root -L 200G tos
-lvcreate -n home -L 200G tos
-mkfs.ext4 -L root /dev/mapper/tos-root
-mkfs.ext4 -L home /dev/mapper/tos-home
-
-#Formating partitions
-mkfs.fat -I -F32 /dev/sda1
 
 #Mounting partitions
-mount /dev/mapper/tos-root /mnt/
-mount /dev/mapper/tos-home /mnt/home
-mkdir -p /mnt/boot/efi
-mount /dev/sda1 /mnt/boot/efi
-swapon /dev/sda2
-swapon -a
-swapon -s
-
-#Establishing a network connection
-if [[ $(ping -c1 8.8.8.8 | grep '0% packet loss') == '' ]]; then
-	nmcli device wifi connect 'ssid' password 'passphrase'
-fi
+mount /dev/sda2 /mnt
+mkdir -p /mnt/boot
+mount /dev/sda1 /mnt/boot
 
 #bootstrapping system
 pacstrap /mnt base base-devel efibootmgr vim dialog grub  --noconfirm
@@ -57,36 +32,20 @@ sed -i 's:^#.*en_US.UTF-8:en_US.UTF-8:' /etc/locale.gen
 locale-gen
 echo 'LANG=en_US.UTF-8' > /etc/locale.conf
 echo KEYMAP='be-latin1' > /etc/vconsole.conf
-echo 'tos' > /etc/hostname
+echo 'arch' > /etc/hostname
 echo -e '127.0.0.1   localhost
 ::1      localhost
-127.0.1.1    tos.localdomain  tos' > /etc/hosts
+127.0.1.1    arch.localdomain  arch' > /etc/hosts
 echo '123' | passwd
 echo '%wheel ALL=(ALL) NOPASSWD: ALL' >> /etc/sudoers
+pacman -Syu --noconfirm linux 
 
 # Creating a user
 useradd -m -p paN8aiEIonqJE -g users -G audio,lp,optical,storage,video,wheel,games,power -s /bin/bash alpha
 
 # Generating the bootloader
-grub-install --efi-directory /boot/efi --force /dev/sda
+mkinitcpio -p linux
+grub-install /dev/sda
 grub-mkconfig -o /boot/grub/grub.cfg
 
 EOF
-
-# Executing chroot function
-cat | arch-chroot -u alpha /mnt <<EOF
-
-# Installing software
-pacman -Syu --noconfirm linux grep vim linux-tos sudo nano 
-
-# Executing custom script
- echo hello world
-echo hello 2
-
-
-EOF
-
-# Executing custom script
- echo hello world
-echo hello 2
-

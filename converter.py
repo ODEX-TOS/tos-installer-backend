@@ -70,7 +70,7 @@ def networkGen(step, config):
 
 def systemGen(step, config):
     return concat(["\n# Setting up system parameters"], system.system(step.model.local, step.model.keymap,
-                                                                      step.model.hostname, step.model.password).setup())
+                                                                      step.model.hostname, step.model.password).setup(config))
 
 
 def createUser(step, config):
@@ -80,12 +80,16 @@ def createUser(step, config):
 
 
 def bootloaderGen(step, config):
+    bIsEncrypted = False
+    for part in step.model.partitions:
+        if part.bIsEncrypted:
+            bIsEncrypted = True
     return concat(["\n# Generating the bootloader"], script.bootloader(shell="",
                                                                        device=step.model.device,
                                                                        installcommand=config["BOOTLOADER_EFI"],
                                                                        installDOSCommand=config["BOOTLOADER_DOS"],
                                                                        configcommand=config["BOOTLOADER_CONFIG"],
-                                                                       bIsGPT=step.model.gpt).exec())
+                                                                       bIsGPT=step.model.gpt, bIsEncrypted=bIsEncrypted, kernel=config["KERNEL"]).exec())
 
 
 def packageGen(step, config):
