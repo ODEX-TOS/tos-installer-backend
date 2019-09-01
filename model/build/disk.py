@@ -14,7 +14,7 @@ def buildPartitionTable(Disk):
     commands = [getPartitionTableType(Disk)]
 
     for index, part in enumerate(Disk.partitions):
-        commands = concat(commands, getPartitionCommands(Disk, part, index))
+        commands = concat(commands, getPartitionCommands(Disk, part, index+1))
     return commands
 
 
