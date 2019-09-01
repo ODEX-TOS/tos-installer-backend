@@ -51,3 +51,8 @@ BOOTSTRAP_PACKAGES:
   - vim
   - dialog
   - grub
+
+# an array of kernels to be installed on the system
+# eg you can do both linux and linux-lts or something
+LINUX:
+  - linux
