@@ -27,7 +27,7 @@ class system:
             "echo '{}' > /etc/hostname".format(self.hostname),
             "echo -e '127.0.0.1   localhost\n::1      localhost\n127.0.1.1    {}.localdomain  {}' > /etc/hosts".format(
                 self.hostname, self.hostname),
-            "echo '{}' | passwd".format(self.password_root),
+            "echo 'root:{}' | chpasswd".format(self.password_root),
             "echo '%wheel ALL=(ALL) NOPASSWD: ALL' >> /etc/sudoers",
         ]
         # installing kernel
