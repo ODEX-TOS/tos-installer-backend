@@ -16,9 +16,8 @@ class system:
     def setup(self):
         commands = [
             "timedatectl set-ntp true",
-            "location-generator",
             "hwclock --systohc",
-            "sed -i 's:^#.*{}:{}' /etc/locale.gen".format(
+            "sed -i 's:^#.*{}:{}:' /etc/locale.gen".format(
                 self.locale, self.locale),
             "locale-gen",
             "echo 'LANG={}' > /etc/locale.conf".format(self.locale),
@@ -26,7 +25,7 @@ class system:
             "echo '{}' > /etc/hostname".format(self.hostname),
             "echo -e '127.0.0.1   localhost\n::1      localhost\n127.0.1.1    {}.localdomain  {}' > /etc/hosts".format(
                 self.hostname, self.hostname),
-            "passwd < {}".format(self.password_root),
+            "echo '{}' | passwd".format(self.password_root),
             "echo '%wheel ALL=(ALL) NOPASSWD: ALL' >> /etc/sudoers"
         ]
         return commands

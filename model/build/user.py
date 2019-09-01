@@ -12,7 +12,7 @@ def makeUnixUser(user, config):
     return [config["USERADD"].format(getEncryptedPassword(user.password), groups, user.shell, user.name)]
 
 
-def listToString(list, delimiter=" "):
+def listToString(list, delimiter=","):
     string = ""
     for item in list:
         string += item + delimiter
