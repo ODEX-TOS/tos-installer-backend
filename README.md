@@ -93,27 +93,56 @@ Our installer works with yaml. If you are unfamiliar with yaml I suggest you loo
 Our yaml file is divided into 2 sections called `models` and `execution`
 The model defines how your installation will look like (eg your disk layout, software to be installed etc)
 The execition is a sort of pipeline of steps the program will take during installation (eg first make the partitions then format them etc)
-Here is the most basic configuration
+Here is the most basic configuration for installing an arch based distribution
 
 ```yaml
 models:
-- disks:
+  - disks:
       - disk:
-          device: "/dev/sda" # can also be /dev/disk/by-uuid or a command in the form $(command here)
-          size: "499G"
-          gpt: true # is the partitiontable gpt or msdos (by default gpt if not set)
+          device: "/dev/sda" # set your disk to install arch on (verify with fdisk -l)
+          size: "499G" # set the size of your disk as per (fdisk -l)
+          gpt: false
           partitions:
             - partition:
-                name: "efi" # just a usefull name to assign a partitions
-                mount: "/boot/efi" # place to mount the partition
-                filesystem: "fat32" # type of filesystem as defined in model.models.partition.EFilesystem
-                start: "1MiB" # parted syntax for defining a location
+                name: "boot"
+                mount: "/boot"
+                filesystem: "ext4"
+                start: "1MiB"
                 end: "200MiB"
+            - partition:
+                name: "root"
+                mount: "/"
+                filesystem: "ext4"
+                start: "200MiB"
+                end: "100%"
+  - chroots:
+      - chroot:
+          name: "root"
+  - users:
+      - user:
+          name: "alpha" # set your username
+          password: "456" # set its password
+  - system:
+      local: "en_US.UTF-8" # change the language of your system (a list is found in /etc/locale.gen)
+      keymap: "be-latin1" # set your keymap options found in /usr/share/kbd/keymaps/**/*.map.gz
+      hostname: "arch" # the hostname of your system
+      password: "123" # the root password
 execution:
-  - partitiontable: "/dev/sda" # build a partition table
+  - partitiontable: "/dev/sda" # device name of your disk
+  - format: "/dev/sda" # device name of your disk
+  - mount: "/dev/sda" # device name of your disk
+  - bootstrap:
+  - fstab:
+  - chroot:
+      user: "root"
+      steps:
+        - systemsetup:
+        - createuser: "alpha" # set this to the name of your user
+        - bootloader: "/dev/sda" # device name of your disk
+
 ```
 
-The above will build a partition table with one entry. It will put the partition table on `/dev/sda` and it will contain one partition with (boot partition)
+The above will install a full arch linux install on disk /dev/sda (you can also specify the disk by-uuid or something else) It will setup a MBR partitiontable, create one user called "alpha", sets the language to english and set the keyboard layout to azerty (belgium), the root password is 123 and the user password is 456
 
 Here is a short list of models you can define
 * `disk` - a drive containing partitions and possibly logic volumes (by default UEFI no MBR)
