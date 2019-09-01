@@ -19,7 +19,7 @@ KEYMAP: "be-latin1"
 HOSTNAME: "tos"
 ROOT_PWD: "123"
 
-CHROOT: "cat | arch-chroot -u {} {}"
+CHROOT: "arch-chroot -u {} {}"
 
 # encryption command
 LUKS: "cryptsetup luksFormat -v -s 512 -h sha512 {}"
