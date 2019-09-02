@@ -49,7 +49,7 @@ class bootloader:
         commands = []
         if self.bIsEncrypted:
             commands.append(
-                self.shell + "sed -i 's:HOOKS=(\(.*\)):HOOKS=(\\1 encrypt):' /etc/mkinitcpio.conf")
+                self.shell + "sed -i 's:HOOKS=(\(.*\)):HOOKS=(\\1 encrypt lvm2):' /etc/mkinitcpio.conf")
             commands.append(
                 'sed -i "s;^GRUB_CMDLINE_LINUX_DEFAULT=.*;GRUB_CMDLINE_LINUX_DEFAULT=\\"quiet cryptdevice={}:luks_lvm\\";" /etc/default/grub'.format(self.partitionDevice))
             commands.append(
