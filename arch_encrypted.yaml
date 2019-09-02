@@ -1,0 +1,54 @@
+models:
+  - disks:
+      - disk:
+          device: "/dev/sda"
+          size: "499G"
+          gpt: false
+          partitions:
+            - partition:
+                name: "boot"
+                mount: "/boot"
+                filesystem: "ext4"
+                start: "1MiB"
+                end: "200MiB"
+            - partition:
+                name: "root"
+                mount: "/"
+                filesystem: "luks"
+                start: "200MiB"
+                end: "100%"
+                encrypted: True
+                password: "a"
+                logicvolumes:
+                  - volume:
+                      name: "root"
+                      size: "200G"
+                      mountpoint: "/"
+                  - volume:
+                      name: "home"
+                      size: "200G"
+                      mountpoint: "/home"
+  - chroots:
+      - chroot:
+          name: "root"
+  - users:
+      - user:
+          name: "alpha" # user by the name alpha
+          password: "123" # the password of said user
+  - system:
+      local: "en_US.UTF-8"
+      keymap: "be-latin1"
+      hostname: "tos"
+      password: "456"
+execution:
+  - partitiontable: "/dev/sda" # build a partition table
+  - format: "/dev/sda" # format a drive
+  - mount: "/dev/sda" # mount all partitions from this drive you can also specify a partition
+  - bootstrap: # bootstrap the system
+  - fstab: # generate fstab based on mounted partitions
+  - chroot:
+      user: "root" # execute the next steps in the chrooted environment
+      steps:
+        - systemsetup:
+        - createuser: "alpha"
+        - bootloader: "/dev/sda" # point to a disk model
