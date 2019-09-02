@@ -12,8 +12,8 @@ parted --script '/dev/sda' name 2 root
 mkfs.ext4 -F /dev/sda1
 modprobe dm-crypt
 modprobe dm-mod
-echo '789' | cryptsetup luksFormat -v -s 512 -h sha512 /dev/sda2 -d -
-echo '789' | cryptsetup open /dev/sda2 luks_lvm -d -
+printf '789' | cryptsetup luksFormat -v -s 512 -h sha512 /dev/sda2 -d -
+printf '789' | cryptsetup open /dev/sda2 luks_lvm -d -
 pvcreate /dev/mapper/luks_lvm
 vgcreate tos /dev/mapper/luks_lvm
 lvcreate -n root -L 200G tos

@@ -14,9 +14,9 @@ def handleEncryptedPartition(part, config):
     The important parameters of @volumes is the mountpoint, name and size
     """
     command = ["modprobe dm-crypt", "modprobe dm-mod"]
-    command.append("echo '{}' | ".format(part.password) +
+    command.append("printf '{}' | ".format(part.password) +
                    config["LUKS"].format(part.device))
-    command.append("echo '{}' | ".format(part.password) +
+    command.append("printf '{}' | ".format(part.password) +
                    config["LUKS_OPEN"].format(part.device))
     command.append("pvcreate " + config["LUKS_DEVICE"])
     command.append("vgcreate {} ".format(
