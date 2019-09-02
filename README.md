@@ -329,6 +329,11 @@ BOOTSTRAP_PACKAGES:
   - vim
   - dialog
   - grub
+  
+# an array of kernels to be installed on the system
+# eg you can do both linux and linux-lts or something
+LINUX:
+  - linux
 ```
 
 > You can change each confing command to your liking. It will generate different bash scripts in the end. Note that you do not need to specify all different options For example you could do the following
