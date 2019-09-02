@@ -51,7 +51,7 @@ class bootloader:
             commands.append(
                 self.shell + "sed -i 's:HOOKS=(\(.*\)):HOOKS=(\\1 encrypt):' /etc/mkinitcpio.conf")
             commands.append(
-                'sed -i "/^GRUB_CMDLINE_LINUX_DEFAULT=/c\GRUB_CMDLINE_LINUX_DEFAULT="quiet cryptdevice="{}:luks_lvm" /etc/default/grub'.format(self.partitionDevice))
+                'sed -i "s;^GRUB_CMDLINE_LINUX_DEFAULT=.*;GRUB_CMDLINE_LINUX_DEFAULT=\\"quiet cryptdevice={}:luks_lvm\\";" /etc/default/grub'.format(self.partitionDevice))
             commands.append(
                 'sed -i "s/^#GRUB_ENABLE_CRYPTODISK=y/GRUB_ENABLE_CRYPTODISK=y/" /etc/default/grub'
             )

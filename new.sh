@@ -57,7 +57,7 @@ useradd -m -p paN8aiEIonqJE -g users -G audio,lp,optical,storage,video,wheel,gam
 
 # Generating the bootloader
 sed -i 's:HOOKS=(\(.*\)):HOOKS=(\1 encrypt):' /etc/mkinitcpio.conf
-sed -i "/^GRUB_CMDLINE_LINUX_DEFAULT=/c\GRUB_CMDLINE_LINUX_DEFAULT="quiet cryptdevice="/dev/sda2:luks_lvm" /etc/default/grub
+sed -i "s;^GRUB_CMDLINE_LINUX_DEFAULT=.*;GRUB_CMDLINE_LINUX_DEFAULT=\"quiet cryptdevice=/dev/sda2:luks_lvm\";" /etc/default/grub
 sed -i "s/^#GRUB_ENABLE_CRYPTODISK=y/GRUB_ENABLE_CRYPTODISK=y/" /etc/default/grub
 mkinitcpio -p linux
 grub-install /dev/sda
