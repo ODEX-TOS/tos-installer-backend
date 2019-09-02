@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 import argparse
 import parser.parse as parse
 from converter import convertYamlToCommands

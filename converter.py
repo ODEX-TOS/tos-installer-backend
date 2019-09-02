@@ -87,7 +87,10 @@ def bootloaderGen(step, config):
         i += 1
         if part.bIsEncrypted:
             bIsEncrypted = True
-            partDevice = step.model.device + str(i)
+            if "nvme" not in step.model.device:
+                partDevice = step.model.device + str(i)
+            else:
+                partDevice = step.model.device + "p" + str(i)
     return concat(["\n# Generating the bootloader"], script.bootloader(shell="",
                                                                        device=step.model.device,
                                                                        installcommand=config["BOOTLOADER_EFI"],
@@ -178,6 +181,8 @@ def genPartitions(parserPartitions, diskdevice, config):
     generate a list of model partition from a parser partition model
     """
     partitions = []
+    if "nvme" in diskdevice:
+        diskdevice += "p"
     # TODO: Generate logic volumes here as well
     for i, part in enumerate(parserPartitions):
         partitions.append(partition.partition(diskdevice+str(i+1),

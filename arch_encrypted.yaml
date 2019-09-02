@@ -1,7 +1,7 @@
 models:
   - disks:
       - disk:
-          device: "/dev/sda"
+          device: "/dev/nvme1"
           size: "499G"
           gpt: false
           partitions:
@@ -41,9 +41,9 @@ models:
       hostname: "tos"
       password: "456"
 execution:
-  - partitiontable: "/dev/sda" # build a partition table
-  - format: "/dev/sda" # format a drive
-  - mount: "/dev/sda" # mount all partitions from this drive you can also specify a partition
+  - partitiontable: "/dev/nvme1" # build a partition table
+  - format: "/dev/nvme1" # format a drive
+  - mount: "/dev/nvme1" # mount all partitions from this drive you can also specify a partition
   - bootstrap: # bootstrap the system
   - fstab: # generate fstab based on mounted partitions
   - chroot:
@@ -51,4 +51,4 @@ execution:
       steps:
         - systemsetup:
         - createuser: "alpha"
-        - bootloader: "/dev/sda" # point to a disk model
+        - bootloader: "/dev/nvme1" # point to a disk model
