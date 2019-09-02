@@ -60,6 +60,8 @@ def mountroot(part, mountpoint):
                 "/dev/mapper/{}-{}".format(config.LUKS_NAME, volume.name), mountpoint + volume.mountpoint))
     for volume in part.volumes:
         if volume.mountpoint != "/":
+            commands.append(
+                "mkdir -p {}".format(mountpoint + volume.mountpoint))
             commands.append("mount {} {}".format(
                 "/dev/mapper/{}-{}".format(config.LUKS_NAME, volume.name), mountpoint + volume.mountpoint))
     return commands

@@ -19,14 +19,16 @@ def handleEncryptedPartition(part, config):
     command.append("echo '{}' | ".format(part.password) +
                    config["LUKS_OPEN"].format(part.device))
     command.append("pvcreate " + config["LUKS_DEVICE"])
-    command.append("vgcreate {}".format(
+    command.append("vgcreate {} ".format(
         config["LUKS_NAME"]) + config["LUKS_DEVICE"])
     for volume in part.volumes:
         command.append(
             "lvcreate -n {} -L {} {}".format(volume.name, volume.size, config["LUKS_NAME"]))
     # add format command for volumes
     for volume in part.volumes:
-        command.append(formatVolume(volume.name, volume.mountpoint, config))
+        formating = formatVolume(volume.name, volume.mountpoint, config)
+        for form in formating:
+            command.append(form)
     return command
 
 
@@ -34,4 +36,4 @@ def handleEncryptedPartition(part, config):
 
 
 def formatVolume(name, mountpoint, config):
-    return "mkfs.ext4 -L {} {}".format(name, "/dev/mapper/{}-{}".format(config["LUKS_NAME"], name))
+    return ["mkfs.ext4 -L {} {}".format(name, "/dev/mapper/{}-{}".format(config["LUKS_NAME"], name))]

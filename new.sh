@@ -5,14 +5,26 @@ parted --script '/dev/sda' mkpart primary 1MiB 200MiB
 parted --script '/dev/sda' set 1 boot on
 parted --script '/dev/sda' name 1 boot
 parted --script '/dev/sda' mkpart primary 200MiB 100%
+parted --script '/dev/sda' set 2 lvm on
 parted --script '/dev/sda' name 2 root
 
 #Formating partitions
 mkfs.ext4 -F /dev/sda1
-mkfs.ext4 -F /dev/sda2
+modprobe dm-crypt
+modprobe dm-mod
+echo '789' | cryptsetup luksFormat -v -s 512 -h sha512 /dev/sda2 -d -
+echo '789' | cryptsetup open /dev/sda2 luks_lvm -d -
+pvcreate /dev/mapper/luks_lvm
+vgcreate tos /dev/mapper/luks_lvm
+lvcreate -n root -L 200G tos
+lvcreate -n home -L 200G tos
+mkfs.ext4 -L root /dev/mapper/tos-root
+mkfs.ext4 -L home /dev/mapper/tos-home
 
 #Mounting partitions
-mount /dev/sda2 /mnt
+mount /dev/mapper/tos-root /mnt/
+mkdir -p /mnt/home
+mount /dev/mapper/tos-home /mnt/home
 mkdir -p /mnt/boot
 mount /dev/sda1 /mnt/boot
 
@@ -32,11 +44,11 @@ sed -i 's:^#.*en_US.UTF-8:en_US.UTF-8:' /etc/locale.gen
 locale-gen
 echo 'LANG=en_US.UTF-8' > /etc/locale.conf
 echo KEYMAP='be-latin1' > /etc/vconsole.conf
-echo 'arch' > /etc/hostname
+echo 'tos' > /etc/hostname
 echo -e '127.0.0.1   localhost
 ::1      localhost
-127.0.1.1    arch.localdomain  arch' > /etc/hosts
-echo 'root:123' | chpasswd
+127.0.1.1    tos.localdomain  tos' > /etc/hosts
+echo 'root:456' | chpasswd
 echo '%wheel ALL=(ALL) NOPASSWD: ALL' >> /etc/sudoers
 pacman -Syu --noconfirm linux 
 
@@ -44,6 +56,7 @@ pacman -Syu --noconfirm linux
 useradd -m -p paN8aiEIonqJE -g users -G audio,lp,optical,storage,video,wheel,games,power -s /bin/bash alpha
 
 # Generating the bootloader
+sed -i 's:HOOKS=(\(.*\)):HOOKS=(\1 encrypt):' /etc/mkinitcpio.conf
 mkinitcpio -p linux
 grub-install /dev/sda
 grub-mkconfig -o /boot/grub/grub.cfg
