@@ -81,15 +81,19 @@ def createUser(step, config):
 
 def bootloaderGen(step, config):
     bIsEncrypted = False
+    partDevice = ""
+    i = 0
     for part in step.model.partitions:
+        i += 1
         if part.bIsEncrypted:
             bIsEncrypted = True
+            partDevice = step.model.device + str(i)
     return concat(["\n# Generating the bootloader"], script.bootloader(shell="",
                                                                        device=step.model.device,
                                                                        installcommand=config["BOOTLOADER_EFI"],
                                                                        installDOSCommand=config["BOOTLOADER_DOS"],
                                                                        configcommand=config["BOOTLOADER_CONFIG"],
-                                                                       bIsGPT=step.model.gpt, bIsEncrypted=bIsEncrypted, kernel=config["KERNEL"]).exec())
+                                                                       bIsGPT=step.model.gpt, bIsEncrypted=bIsEncrypted, kernel=config["KERNEL"], partitionDevice=partDevice).exec())
 
 
 def packageGen(step, config):

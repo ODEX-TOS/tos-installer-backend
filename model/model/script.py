@@ -31,7 +31,7 @@ class bootloader:
     Object holding all information for writing a bootloader to a boot partition
     """
 
-    def __init__(self, shell="/bin/sh -c", device="/dev/sda", installcommand=config.BOOTLOADER_EFI, installDOSCommand=config.BOOTLOADER_DOS, configcommand=config.BOOTLOADER_CONFIG, bIsGPT=True, bIsEncrypted=False, kernel="linux"):
+    def __init__(self, shell="/bin/sh -c", device="/dev/sda", installcommand=config.BOOTLOADER_EFI, installDOSCommand=config.BOOTLOADER_DOS, configcommand=config.BOOTLOADER_CONFIG, bIsGPT=True, bIsEncrypted=False, kernel="linux", partitionDevice="/dev/sda1"):
         self.shell = shell
         self.installCommand = installcommand
         self.installDOSCommand = installDOSCommand
@@ -40,6 +40,7 @@ class bootloader:
         self.device = device
         self.bIsEncrypted = bIsEncrypted
         self.kernel = kernel
+        self.partitionDevice = partitionDevice
 
     def exec(self):
         """
@@ -49,6 +50,11 @@ class bootloader:
         if self.bIsEncrypted:
             commands.append(
                 self.shell + "sed -i 's:HOOKS=(\(.*\)):HOOKS=(\\1 encrypt):' /etc/mkinitcpio.conf")
+            commands.append(
+                'sed -i "/^GRUB_CMDLINE_LINUX_DEFAULT=/c\GRUB_CMDLINE_LINUX_DEFAULT="quiet cryptdevice="{}:luks_lvm" /etc/default/grub'.format(self.partitionDevice))
+            commands.append(
+                'sed -i "s/^#GRUB_ENABLE_CRYPTODISK=y/GRUB_ENABLE_CRYPTODISK=y/" /etc/default/grub'
+            )
         commands.append(
             self.shell + "mkinitcpio -p {}".format(self.kernel[0]))
         if self.bIsGPT:
