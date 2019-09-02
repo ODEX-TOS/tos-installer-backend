@@ -59,6 +59,7 @@ models:
   - packages:
       - package:
           name: "userpackages"
+          install: "yay -Syu --noconfirm"
           packagefile: "packages.txt" # either from a file
           package: # or a list in this format
             - a

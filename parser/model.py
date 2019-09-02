@@ -326,6 +326,8 @@ def generatePackages(raw, config):
             representation.file = pack["package"]["packagefile"]
         if existsDoubleKey(pack, "package", "name"):
             representation.name = pack["package"]["name"]
+        if existsDoubleKey(pack, "package", "install"):
+            representation.install = pack["package"]["install"]
         end.append(representation)
     return end
 
