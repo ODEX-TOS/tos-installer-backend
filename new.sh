@@ -93,7 +93,7 @@ yay -Syu --noconfirm linux grep vim linux-tos sudo nano
 
 # Executing custom script
  echo hello world
-echo hello 2
+echo hello 2 \$USER
 
 
 EOF2
@@ -101,5 +101,5 @@ EOF
 
 # Executing custom script
  echo hello world
-echo hello 2
+echo hello 2 $USER
 

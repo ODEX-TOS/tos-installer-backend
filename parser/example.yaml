@@ -77,7 +77,7 @@ models:
           file: "test.sh"
           command: |
             echo hello world
-            echo hello 2
+            echo hello 2 $USER
       - script:
           name: "script2"
           file: "show.sh"

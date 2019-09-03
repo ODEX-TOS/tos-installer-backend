@@ -27,11 +27,11 @@ class chroot:
         Use start instead
         """
         if not type(command) is list:
-            return [self.chroot.format("root", self.mountpoint) + " <<{}\n".format(herefile) + "su {} <<\{}\n".format(self.user, userHerefile) + command + "\n" + userHerefile + "\n" + herefile]
+            return [self.chroot.format("root", self.mountpoint) + " <<{}\n".format(herefile) + "su {} <<\{}\n".format(self.user, userHerefile) + command.replace("$", "\\$") + "\n" + userHerefile + "\n" + herefile]
         commands = ""
         for item in command:
             commands += item + "\n"
-        return [self.chroot.format("root", self.mountpoint) + " <<{}\n".format(herefile) + "su {} <<\{}\n".format(self.user, userHerefile) + commands + "\n" + userHerefile + "\n" + herefile]
+        return [self.chroot.format("root", self.mountpoint) + " <<{}\n".format(herefile) + "su {} <<\{}\n".format(self.user, userHerefile) + commands.replace("$", "\\$") + "\n" + userHerefile + "\n" + herefile]
 
     def chrootAsRoot(self, command, herefile):
         """
@@ -39,8 +39,8 @@ class chroot:
         Use start instead
         """
         if not type(command) is list:
-            return [self.chroot.format(self.user, self.mountpoint) + " <<{}\n".format(herefile) + command + "\n" + herefile]
+            return [self.chroot.format(self.user, self.mountpoint) + " <<{}\n".format(herefile) + command.replace("$", "\\$") + "\n" + herefile]
         commands = ""
         for item in command:
             commands += item + "\n"
-        return [self.chroot.format(self.user, self.mountpoint) + " <<{}\n".format(herefile) + commands + "\n" + herefile]
+        return [self.chroot.format(self.user, self.mountpoint) + " <<{}\n".format(herefile) + commands.replace("$", "\\$") + "\n" + herefile]
