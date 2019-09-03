@@ -12,10 +12,16 @@ models:
                 start: "1MiB" # parted syntax for defining a location
                 end: "200MiB"
             - partition:
+                name: "boot" # just a usefull name to assign a partitions
+                mount: "/boot" # place to mount the partition
+                filesystem: "ext4" # type of filesystem as defined in model.models.partition.EFilesystem
+                start: "200MiB" # parted syntax for defining a location
+                end: "800MiB"
+            - partition:
                 name: "swap"
                 mount: "swap"
                 filesystem: "ext4"
-                start: "200MiB"
+                start: "800MiB"
                 end: "8GiB"
             - partition:
                 name: "root"

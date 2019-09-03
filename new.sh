@@ -4,19 +4,22 @@ parted --script '/dev/sda' mklabel gpt
 parted --script '/dev/sda' mkpart ESP fat32 1MiB 200MiB
 parted --script '/dev/sda' set 1 boot on
 parted --script '/dev/sda' name 1 efi
-parted --script '/dev/sda' mkpart primary 200MiB 8GiB
-parted --script '/dev/sda' name 2 swap
+parted --script '/dev/sda' mkpart primary 200MiB 800MiB
+parted --script '/dev/sda' name 2 boot
+parted --script '/dev/sda' mkpart primary 800MiB 8GiB
+parted --script '/dev/sda' name 3 swap
 parted --script '/dev/sda' mkpart primary 8GiB 100%
-parted --script '/dev/sda' set 3 lvm on
-parted --script '/dev/sda' name 3 root
+parted --script '/dev/sda' set 4 lvm on
+parted --script '/dev/sda' name 4 root
 
 #Formating partitions
 mkfs.fat -I -F32 /dev/sda1
 mkfs.ext4 -F /dev/sda2
+mkfs.ext4 -F /dev/sda3
 modprobe dm-crypt
 modprobe dm-mod
-printf 'a' | cryptsetup luksFormat -v -s 512 -h sha512 /dev/sda3 -d -
-printf 'a' | cryptsetup open /dev/sda3 luks_lvm -d -
+printf 'a' | cryptsetup luksFormat -v -s 512 -h sha512 /dev/sda4 -d -
+printf 'a' | cryptsetup open /dev/sda4 luks_lvm -d -
 pvcreate /dev/mapper/luks_lvm
 vgcreate tos /dev/mapper/luks_lvm
 lvcreate -n root -L 200G tos
@@ -31,9 +34,11 @@ mkfs.fat -I -F32 /dev/sda1
 mount /dev/mapper/tos-root /mnt/
 mkdir -p /mnt/home
 mount /dev/mapper/tos-home /mnt/home
+mkdir -p /mnt/boot
+mount /dev/sda2 /mnt/boot
 mkdir -p /mnt/boot/efi
 mount /dev/sda1 /mnt/boot/efi
-swapon /dev/sda2
+swapon /dev/sda3
 swapon -a
 swapon -s
 
@@ -71,7 +76,7 @@ useradd -m -p paN8aiEIonqJE -g users -G audio,lp,optical,storage,video,wheel,gam
 
 # Generating the bootloader
 sed -i 's:HOOKS=(\(.*\)):HOOKS=(\1 encrypt lvm2):' /etc/mkinitcpio.conf
-sed -i "s;^GRUB_CMDLINE_LINUX_DEFAULT=.*;GRUB_CMDLINE_LINUX_DEFAULT=\"quiet cryptdevice=/dev/sda3:luks_lvm\";" /etc/default/grub
+sed -i "s;^GRUB_CMDLINE_LINUX_DEFAULT=.*;GRUB_CMDLINE_LINUX_DEFAULT=\"quiet cryptdevice=/dev/sda4:luks_lvm\";" /etc/default/grub
 sed -i "s/^#GRUB_ENABLE_CRYPTODISK=y/GRUB_ENABLE_CRYPTODISK=y/" /etc/default/grub
 mkinitcpio -p linux
 grub-install --efi-directory /boot/efi --force /dev/sda

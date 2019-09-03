@@ -5,6 +5,9 @@ import os
 import sys
 sys.path.append("...")  # set all imports to root imports
 
+# TODO: mount all major partition mountpoint first eg mount / first then all /* second then all /*/* third etc. You cant mount /boot/efi for instance before mounting /boot
+# currenly the mounting of /boot and /boot/efi are "hardcoded" but this should work for every arbitrary mountpoint
+
 
 def mountAll(parts, mountpoint=config.MOUNTPOINT):
     """
@@ -21,9 +24,13 @@ def mountAll(parts, mountpoint=config.MOUNTPOINT):
         if part.mountpoint == "/":
             command = concat(command, mount(part, mountpoint))
             break
+    # mount /boot as second (in case there is an efi directory the /boot should be mounted first)
+    for part in parts:
+        if part.mountpoint == "/boot":
+            command = concat(command, mount(part, mountpoint))
     # Add all other mounts
     for part in parts:
-        if part.mountpoint != "/":
+        if part.mountpoint != "/" and part.mountpoint != "/boot":
             command = concat(command, mount(part, mountpoint))
     return command
 
