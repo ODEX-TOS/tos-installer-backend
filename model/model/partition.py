@@ -3,7 +3,7 @@ class partition:
     Stores general information about partitions
     """
 
-    def __init__(self, device=None, name="root", mountpoint=None, filesystem=None, start=None, end=None, bIsEncrypted=False, volumes=[], password=""):
+    def __init__(self, device=None, name="root", mountpoint=None, filesystem=None, start=None, end=None, bIsEncrypted=False, volumes=[], password="", resize=False, size=None, offset=0):
         """
         @device is the device of the partition eg /dev/sda1 or /dev/nvme1p1
         @name is the canoncial name for the partition
@@ -14,6 +14,9 @@ class partition:
         @bIsEncrypted tells us if the partition should be encrypted
         @volumes: logic volumes that are hosted in this partition
         @password: the password for the encrypted drive
+        @resize: A boolean telling us if the partition already exists and if we need to resize it. By default we don't
+        @size: This is the size in string format as defined by parted. The isze will be the new partition size of the disk if size is provided start and end options don't matter anymore
+        @offset: If the partitionindex is different than the ordered list that the parttion is defined in
         """
         self.device = device
         self.name = name
@@ -24,6 +27,9 @@ class partition:
         self.bIsEncrypted = bIsEncrypted
         self.volumes = volumes
         self.password = password
+        self.resize = resize
+        self.size = size
+        self.offset = str(offset)
 
     def toString(self, indent="\t"):
         return "\t partition: {} - mounted on {} as {} from {} to {}".format(self.device,

@@ -71,6 +71,16 @@ def buildEncryptedPrimaryPartition(disk, Partition, index=0, name="root"):
     return commands
 
 
+def buildResizePartition(disk, Partition, index=0, name="root"):
+    """
+    Resize an exisiting partition to a new size based on its index and the size
+    """
+    commands = []
+    commands.append(getBaseCommand(
+        disk) + "resizepart {} {}".format(index, Partition.size))
+    return commands
+
+
 def getBaseCommand(disk):
     """
     returns the base of the parted command

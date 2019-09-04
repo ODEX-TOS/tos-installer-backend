@@ -31,6 +31,7 @@ class disk:
         self.size = None
         self.gpt = True
         self.partitions = [None]
+        self.bGenTable = True
 
     def __repr__(self):
         return self.__str__()
@@ -54,6 +55,9 @@ class partition:
         self.bIsEncrypted = False
         self.password = ""  # the encryption password
         self.volumes = [None]
+        self.offset = None
+        self.resize = False
+        self.size = None
 
     def __repr__(self):
         return self.__str__()
@@ -261,6 +265,8 @@ def generateDisks(raw):
             representation.gpt = pack["gpt"]
         if exists(pack, "partitions"):
             representation.partitions = generatePartitions(pack["partitions"])
+        if exists(pack, "table"):
+            representation.bGenTable = pack["table"]
 
         end.append(representation)
     return end
@@ -284,6 +290,12 @@ def generatePartitions(raw):
             representation.bIsEncrypted = pack["partition"]["encrypted"]
         if existsDoubleKey(pack, "partition", "password"):
             representation.password = pack["partition"]["password"]
+        if existsDoubleKey(pack, "partition", "offset"):
+            representation.offset = pack["partition"]["offset"]
+        if existsDoubleKey(pack, "partition", "resize"):
+            representation.resize = pack["partition"]["resize"]
+        if existsDoubleKey(pack, "partition", "size"):
+            representation.size = pack["partition"]["size"]
         if existsDoubleKey(pack, "partition", "logicvolumes"):
             representation.volumes = generateVolumes(
                 pack["partition"]["logicvolumes"])

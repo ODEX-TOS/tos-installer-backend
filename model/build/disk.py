@@ -13,8 +13,22 @@ def buildPartitionTable(Disk):
     """
     commands = [getPartitionTableType(Disk)]
 
+    for part in Disk.partitions:
+        commands = concat(commands, getPartitionCommands(
+            Disk, part, part.offset))
+    return commands
+
+
+def buildPartitionTableEntries(Disk):
+    """
+    Generate the partition table commands based on a disk object
+    It appends the partitions to an exisiting partition table
+    """
+    commands = []
+
     for index, part in enumerate(Disk.partitions):
-        commands = concat(commands, getPartitionCommands(Disk, part, index+1))
+        commands = concat(commands, getPartitionCommands(
+            Disk, part, part.offset))
     return commands
 
 
@@ -27,6 +41,8 @@ def getPartitionCommands(Disk, part, index):
         return partition.buildBootablePartition(Disk, part, index, part.name, Disk.bIsGPT)
     elif part.mountpoint == "/boot" and not Disk.bIsGPT:
         return partition.buildBootablePartition(Disk, part, index, part.name, Disk.bIsGPT)
+    elif part.resize:
+        return partition.buildResizePartition(Disk, part, index, part.name)
     return partition.buildPrimaryPartition(Disk, part, index, part.name)
 
 

@@ -1,6 +1,5 @@
 
 #Building partition table
-parted --script '/dev/sda' mklabel gpt
 parted --script '/dev/sda' mkpart ESP fat32 1MiB 200MiB
 parted --script '/dev/sda' set 1 boot on
 parted --script '/dev/sda' name 1 efi
@@ -8,9 +7,12 @@ parted --script '/dev/sda' mkpart primary 200MiB 800MiB
 parted --script '/dev/sda' name 2 boot
 parted --script '/dev/sda' mkpart primary 800MiB 8GiB
 parted --script '/dev/sda' name 3 swap
-parted --script '/dev/sda' mkpart primary 8GiB 100%
+parted --script '/dev/sda' mkpart primary 8GiB 98%
 parted --script '/dev/sda' set 4 lvm on
 parted --script '/dev/sda' name 4 root
+parted --script '/dev/sda' mkpart primary 97% 99%
+parted --script '/dev/sda' name 8 offset
+parted --script '/dev/sda' resizepart 9 1GB
 
 #Formating partitions
 mkfs.fat -I -F32 /dev/sda1
@@ -26,6 +28,8 @@ lvcreate -n root -L 200G tos
 lvcreate -n home -L 200G tos
 mkfs.ext4 -L root /dev/mapper/tos-root
 mkfs.ext4 -L home /dev/mapper/tos-home
+mkfs.ext4 -F /dev/sda8
+mkfs.ext4 -F /dev/sda9
 
 #Formating partitions
 mkfs.fat -I -F32 /dev/sda1
@@ -41,6 +45,10 @@ mount /dev/sda1 /mnt/boot/efi
 swapon /dev/sda3
 swapon -a
 swapon -s
+mkdir -p /mnt/tmp
+mount /dev/sda8 /mnt/tmp
+mkdir -p /mnt/proc
+mount /dev/sda9 /mnt/proc
 
 #Establishing a network connection
 if [[ $(ping -c1 8.8.8.8 | grep '0% packet loss') == '' ]]; then

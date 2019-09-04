@@ -4,6 +4,7 @@ models:
           device: "/dev/sda" # can also be /dev/disk/by-uuid or a command in the form $(command here)
           size: "499G"
           gpt: true # is the partitiontable gpt or msdos (by default gpt if not set)
+          table: true # build a new partition table (by default true). If this is set to false the below partitions will be added to an exisiting partitiontable
           partitions:
             - partition:
                 name: "efi" # just a usefull name to assign a partitions
@@ -28,7 +29,7 @@ models:
                 mount: "/"
                 filesystem: "luks"
                 start: "8GiB"
-                end: "100%"
+                end: "98%"
                 encrypted: True
                 password: "a"
                 logicvolumes:
@@ -40,6 +41,20 @@ models:
                       name: "home"
                       size: "200G"
                       mountpoint: "/home"
+            - partition:
+                name: "offset"
+                mount: "/tmp"
+                filesystem: "ext4"
+                start: "97%"
+                end: "99%"
+                offset: 8 # set the partition number here. This means that partition number 5, 6 and 7 are configured elsewhere (eg a exisiting ubuntu install)
+            - partition:
+                name: "offset"
+                mount: "/proc"
+                filesystem: "ext4"
+                offset: 9 # all partition below the first offset need to be manually set to another number
+                resize: true # by default false. If this is true
+                size: "1GB" # a resize partition doesn't need a start or end. It only needs a new size set
   - chroots:
       - chroot:
           name: "alpha" # name of the user to chroot

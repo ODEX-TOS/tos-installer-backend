@@ -173,7 +173,9 @@ def PartitionTableGen(ptable, config):
     model = ptable.model
     table = tablemodel.disk(model.device, model.size,
                             genPartitions(model.partitions, model.device, config), model.gpt)
-    return concat(["\n#Building partition table"], tablebuilder.buildPartitionTable(table))
+    if model.bGenTable:
+        return concat(["\n#Building partition table"], tablebuilder.buildPartitionTable(table))
+    return concat(["\n#Building partition table"], tablebuilder.buildPartitionTableEntries(table))
 
 
 def genPartitions(parserPartitions, diskdevice, config):
@@ -185,6 +187,11 @@ def genPartitions(parserPartitions, diskdevice, config):
         diskdevice += "p"
     # TODO: Generate logic volumes here as well
     for i, part in enumerate(parserPartitions):
-        partitions.append(partition.partition(diskdevice+str(i+1),
-                                              part.name, part.mount, part.filesystem, part.start, part.end, part.bIsEncrypted, part.volumes, part.password))
+        device = diskdevice+str(i+1)
+        offset = i+1
+        if (part.offset != None):
+            device = diskdevice + str(part.offset)
+            offset = part.offset
+        partitions.append(partition.partition(device,
+                                              part.name, part.mount, part.filesystem, part.start, part.end, part.bIsEncrypted, part.volumes, part.password, part.resize, part.size, offset))
     return partitions
