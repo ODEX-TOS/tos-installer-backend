@@ -81,9 +81,12 @@ def parse(filename):
     """
     Returns a config dictionary
     """
-    with open(filename, 'r') as stream:
-        try:
-            content = yaml.load(stream, Loader=yaml.Loader)
-        except yaml.YAMLError as exc:
-            print(exc)
+    try:
+        with open(filename, 'r') as stream:
+            try:
+                content = yaml.load(stream, Loader=yaml.Loader)
+            except yaml.YAMLError as exc:
+                print(exc)
+    except FileNotFoundError as err:
+        return populateMissingPieces({"CONFIG": "config.py"})
     return populateMissingPieces(content)
