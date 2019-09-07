@@ -1,6 +1,6 @@
 # Maintainer: Tom Meyers tom@odex.be
 pkgname=installer-backend
-pkgver=r78.8bd7aec
+pkgver=r80.7778ad6
 pkgrel=1
 pkgdesc="API for installing Operating Systems"
 arch=(any)
@@ -26,5 +26,5 @@ build() {
 
 package() {
         cd "$srcdir/$_reponame"
-        python setup.py  install
+        python setup.py  install --root="${pkgdir}"
 }
