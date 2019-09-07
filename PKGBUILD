@@ -1,6 +1,6 @@
 # Maintainer: Tom Meyers tom@odex.be
 pkgname=installer-backend
-pkgver=r81.105ed28
+pkgver=r82.3bd2ef6
 pkgrel=1
 pkgdesc="API for installing Operating Systems"
 arch=(any)
