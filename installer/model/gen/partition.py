@@ -1,5 +1,5 @@
-from model.model import partition
-import shell
+from installer.model.model import partition
+import installer.shell as shell
 import sys
 sys.path.append("...")  # set all imports to root imports
 

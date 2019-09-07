@@ -1,7 +1,7 @@
-import shell
-import config
-import model.build.software as swb
-import model.model.software as sw
+import installer.shell as shell
+import installer.config as config
+import installer.model.build.software as swb
+import installer.model.model.software as sw
 # TODO: add localtime generator
 # shell command is as followed ln -sf /usr/share/zoneinfo/"$continent"/"$capital" /etc/localtime
 # where $continent is in  /usr/share/zoneinfo/*

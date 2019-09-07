@@ -1,7 +1,7 @@
 import yaml
-import parser.yamlfile as yamlfile
-import parser.model as model
-import parser.execution as execution
+import installer.parser.yamlfile as yamlfile
+import installer.parser.model as model
+import installer.parser.execution as execution
 
 
 def generate(raw, config):

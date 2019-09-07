@@ -1,6 +1,6 @@
-import shell
+import installer.shell as shell
 import socket
-import config
+import installer.config as config
 import os
 import sys
 sys.path.append("...")  # set all imports to root imports

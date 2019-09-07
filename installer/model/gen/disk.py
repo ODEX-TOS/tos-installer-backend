@@ -1,6 +1,6 @@
-from model.model import disk as model
-from model.gen import partition
-import shell
+from installer.model.model import disk as model
+from installer.model.gen import partition
+import installer.shell as shell
 import sys
 sys.path.append("...")  # set all imports to root imports
 

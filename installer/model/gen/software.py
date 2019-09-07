@@ -1,5 +1,5 @@
-from model.model.software import software
-import config
+from installer.model.model.software import software
+import installer.config as config
 import os
 import sys
 sys.path.append("...")  # set all imports to root imports

@@ -1,5 +1,5 @@
 import yaml
-import config
+import installer.config as config
 
 
 def populateMissingPieces(content):

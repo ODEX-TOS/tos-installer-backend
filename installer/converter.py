@@ -1,19 +1,19 @@
-import parser.execution as execution
-import parser.model as parsemodel
-import model.build.disk as tablebuilder
-import model.model.disk as tablemodel
-import model.model.partition as partition
-import model.build.partition as pb
-import model.build.mount as mb
-import model.model.software as sw
-import model.build.software as swb
-import model.gen.software as swg
-import model.model.script as script
-import model.model.user as user
-import system
-import model.build.user as userb
-import model.model.chroot as chroot
-import model.model.network as nw
+import installer.parser.execution as execution
+import installer.parser.model as parsemodel
+import installer.model.build.disk as tablebuilder
+import installer.model.model.disk as tablemodel
+import installer.model.model.partition as partition
+import installer.model.build.partition as pb
+import installer.model.build.mount as mb
+import installer.model.model.software as sw
+import installer.model.build.software as swb
+import installer.model.gen.software as swg
+import installer.model.model.script as script
+import installer.model.model.user as user
+import installer.system as system
+import installer.model.build.user as userb
+import installer.model.model.chroot as chroot
+import installer.model.model.network as nw
 
 conf = None
 

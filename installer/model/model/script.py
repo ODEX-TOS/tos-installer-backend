@@ -1,7 +1,7 @@
-import config
-import model.model.software as sw
-import model.build.software as builder
-import shell
+import installer.config as config
+import installer.model.model.software as sw
+import installer.model.build.software as builder
+import installer.shell
 import os
 import sys
 sys.path.append("...")  # set all imports to root imports

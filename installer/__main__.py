@@ -1,8 +1,8 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 import argparse
-import parser.parse as parse
-from converter import convertYamlToCommands
-import parser.command as configs
+import installer.parser.parse as parse
+from installer.converter import convertYamlToCommands
+import installer.parser.command as configs
 
 
 parser = argparse.ArgumentParser(
