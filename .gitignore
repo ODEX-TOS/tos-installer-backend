@@ -4,6 +4,7 @@ dist
 *.egg-info
 src
 tos-installer-backend
-
+*.pkg.tar.xz
+pkg
 
 !installer/model/build/
