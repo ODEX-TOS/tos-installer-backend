@@ -36,6 +36,12 @@ def parse(filename, config):
             print(exc)
     return modelLinker(generate(content, config))
 
+def parseString(string, config):
+        try:
+            content = yaml.load(string, Loader=yaml.Loader)
+        except yaml.YAMLError as exc:
+            print(exc)
+        return modelLinker(generate(content, config))
 
 if __name__ == "__main__":
     with open("example.yaml", 'r') as stream:
