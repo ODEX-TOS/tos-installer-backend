@@ -6,6 +6,6 @@ setup(
    description='Install POSIX compliant Operating systems using a yaml file',
    author='Meyers Tom',
    author_email='tom@odex.be',
-   packages=['installer.model', 'installer.parser', 'installer'],  #same as name
-   install_requires=['yaml'], #external packages as dependencies
+   packages=['installer', 'installer.model', 'installer.model.build', 'installer.model.gen', 'installer.model.model'],  #same as name
+   install_requires=['PyYAML'], #external packages as dependencies
 )

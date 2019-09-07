@@ -1,6 +1,6 @@
 # Maintainer: Tom Meyers tom@odex.be
 pkgname=installer-backend
-pkgver=r62.2092668
+pkgver=r78.8bd7aec
 pkgrel=1
 pkgdesc="API for installing Operating Systems"
 arch=(any)
@@ -26,7 +26,5 @@ build() {
 
 package() {
         cd "$srcdir/$_reponame"
-        install -Dm755 readme-gen "$pkgdir"/usr/bin/readme-gen
-        install -Dm644 visual "$pkgdir"/var/cache/readme/demo
-        install -Dm644 generic "$pkgdir"/var/cache/readme/demo
+        python setup.py  install
 }
