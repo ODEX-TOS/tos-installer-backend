@@ -63,7 +63,6 @@ def getConfig():
 
 if __name__ == "__main__":
     config = getConfig()
-    print(args)
 
     if args["out"] != '':
         if args["in"] != '':
