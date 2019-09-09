@@ -36,4 +36,4 @@ def handleEncryptedPartition(part, config):
 
 
 def formatVolume(name, mountpoint, config):
-    return ["mkfs.ext4 -L {} {}".format(name, "/dev/mapper/{}-{}".format(config["LUKS_NAME"], name))]
+    return ["mkfs.ext4 -F -L {} {}".format(name, "/dev/mapper/{}-{}".format(config["LUKS_NAME"], name))]
