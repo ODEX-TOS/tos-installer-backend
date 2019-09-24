@@ -69,7 +69,7 @@ All you need for the installer to function is
 
 1. Clone the tos-installer-backend
 ```sh
-git clone https:://github.com/ODEX-TOS/tos-installer-backend.git
+git clone https://github.com/ODEX-TOS/tos-installer-backend.git
 ```
 2. Install dependencies
 * python3
