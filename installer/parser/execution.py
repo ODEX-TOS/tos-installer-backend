@@ -198,7 +198,6 @@ class createUser(modelSetter):
         return "user -- reference: {} -- model {}".format(self.reference, self.model).replace("\n", "\n\t\t")
 
     def setModel(self, model):
-        print(model.users)
         for user in model.users:
             if self.reference == user.name:
                 self.model = user
