@@ -3,6 +3,10 @@ import installer.config as config
 
 
 def populateMissingNetwork(content):
+    """
+    See if a piece of the dictionary is missing. If it is then we set it to the hardcoded values defined in config.py
+    This function should not be called externally. It fills all data related to network configuration options
+    """
     if not exists(content, "IP"):
         content["IP"] = config.IP
     if not exists(content, "WIFI_CONNECT_COMMAND"):
@@ -13,6 +17,10 @@ def populateMissingNetwork(content):
 
 
 def populateMissingUser(content):
+    """
+    See if a piece of the dictionary is missing. If it is then we set it to the hardcoded values defined in config.py
+    This function should not be called externally. It fills all data related to user configuration options
+    """
     if not exists(content, "DEFAULT_SHELL"):
         content["DEFAULT_SHELL"] = config.DEFAULT_SHELL
     if not exists(content, "USERADD"):
@@ -23,6 +31,10 @@ def populateMissingUser(content):
 
 
 def populateMissingBootloader(content):
+    """
+    See if a piece of the dictionary is missing. If it is then we set it to the hardcoded values defined in config.py
+    This function should not be called externally. It fills all data related to bootloader configuration options
+    """
     if not exists(content, "BOOTLOADER_EFI"):
         content["BOOTLOADER_EFI"] = config.BOOTLOADER_EFI
     if not exists(content, "BOOTLOADER_DOS"):
@@ -33,6 +45,10 @@ def populateMissingBootloader(content):
 
 
 def populateMissingSystem(content):
+    """
+    See if a piece of the dictionary is missing. If it is then we set it to the hardcoded values defined in config.py
+    This function should not be called externally. It fills all data related to system configuration options
+    """
     if not exists(content, "LOCAL"):
         content["LOCAL"] = config.LOCALE
     if not exists(content, "KEYMAP"):
@@ -45,6 +61,10 @@ def populateMissingSystem(content):
 
 
 def populateMissingLUKS(content):
+    """
+    See if a piece of the dictionary is missing. If it is then we set it to the hardcoded values defined in config.py
+    This function should not be called externally. It fills all data related to LUKS encryption configuration options
+    """
     if not exists(content, "LUKS"):
         content["LUKS"] = config.LUKS
     if not exists(content, "LUKS_OPEN"):
@@ -57,6 +77,10 @@ def populateMissingLUKS(content):
 
 
 def populateMissingMisc(content):
+    """
+    See if a piece of the dictionary is missing. If it is then we set it to the hardcoded values defined in config.py
+    This function should not be called externally. It fills all data related to Miscellanous configuration options
+    """
     if not exists(content, "INSTALLCOMMAND"):
         content["INSTALLCOMMAND"] = config.INSTALLCOMMAND
     if not exists(content, "CHROOT"):
@@ -85,7 +109,6 @@ def populateMissingPieces(content):
     """
     See if a piece of the dictionary is missing. If it is then we set it to the hardcoded values defined in config.py
     """
-
 
     content = populateMissingNetwork(content)
     content = populateMissingUser(content)
