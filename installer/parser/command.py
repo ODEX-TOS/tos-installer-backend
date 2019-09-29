@@ -2,34 +2,37 @@ import yaml
 import installer.config as config
 
 
-def populateMissingPieces(content):
-    """
-    See if a piece of the dictionary is missing. If it is then we set it to the hardcoded values defined in config.py
-    """
-    if not exists(content, "INSTALLCOMMAND"):
-        content["INSTALLCOMMAND"] = config.INSTALLCOMMAND
-
+def populateMissingNetwork(content):
     if not exists(content, "IP"):
         content["IP"] = config.IP
     if not exists(content, "WIFI_CONNECT_COMMAND"):
         content["WIFI_CONNECT_COMMAND"] = config.WIFI_CONNECT_COMMAND
     if not exists(content, "WIFI_CONNECT_COMMAND_WITH_PASSWORD"):
         content["WIFI_CONNECT_COMMAND_WITH_PASSWORD"] = config.WIFI_CONNECT_COMMAND_WITH_PASSWORD
+    return content
 
+
+def populateMissingUser(content):
     if not exists(content, "DEFAULT_SHELL"):
         content["DEFAULT_SHELL"] = config.DEFAULT_SHELL
     if not exists(content, "USERADD"):
         content["USERADD"] = config.USERADD
     if not exists(content, "MOUNTPOINT"):
         content["MOUNTPOINT"] = config.MOUNTPOINT
+    return content
 
+
+def populateMissingBootloader(content):
     if not exists(content, "BOOTLOADER_EFI"):
         content["BOOTLOADER_EFI"] = config.BOOTLOADER_EFI
     if not exists(content, "BOOTLOADER_DOS"):
         content["BOOTLOADER_DOS"] = config.BOOTLOADER_DOS
     if not exists(content, "BOOTLOADER_CONFIG"):
         content["BOOTLOADER_CONFIG"] = config.BOOTLOADER_CONFIG
+    return content
 
+
+def populateMissingSystem(content):
     if not exists(content, "LOCAL"):
         content["LOCAL"] = config.LOCALE
     if not exists(content, "KEYMAP"):
@@ -38,10 +41,10 @@ def populateMissingPieces(content):
         content["HOSTNAME"] = config.HOSTNAME
     if not exists(content, "ROOT_PWD"):
         content["ROOT_PWD"] = config.ROOT_PWD
+    return content
 
-    if not exists(content, "CHROOT"):
-        content["CHROOT"] = config.CHROOT
 
+def populateMissingLUKS(content):
     if not exists(content, "LUKS"):
         content["LUKS"] = config.LUKS
     if not exists(content, "LUKS_OPEN"):
@@ -50,6 +53,14 @@ def populateMissingPieces(content):
         content["LUKS_NAME"] = config.LUKS_NAME
     if not exists(content, "LUKS_DEVICE"):
         content["LUKS_DEVICE"] = config.LUKS_DEVICE
+    return content
+
+
+def populateMissingMisc(content):
+    if not exists(content, "INSTALLCOMMAND"):
+        content["INSTALLCOMMAND"] = config.INSTALLCOMMAND
+    if not exists(content, "CHROOT"):
+        content["CHROOT"] = config.CHROOT
 
     if not exists(content, "FSTAB"):
         content["FSTAB"] = config.FSTAB
@@ -67,6 +78,21 @@ def populateMissingPieces(content):
         content["BOOTSTRAP_PACKAGES"] = config.BOOTSTRAP_PACKAGES
     if not exists(content, "KERNEL"):
         content["KERNEL"] = config.KERNEL
+    return content
+
+
+def populateMissingPieces(content):
+    """
+    See if a piece of the dictionary is missing. If it is then we set it to the hardcoded values defined in config.py
+    """
+
+
+    content = populateMissingNetwork(content)
+    content = populateMissingUser(content)
+    content = populateMissingBootloader(content)
+    content = populateMissingSystem(content)
+    content = populateMissingMisc(content)
+
     return content
 
 
