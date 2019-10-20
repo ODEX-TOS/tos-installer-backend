@@ -84,7 +84,7 @@ HERESTRING = "EOF"
 BOOTSTRAP = "pacstrap /mnt {} --noconfirm"
 
 BOOTSTRAP_PACKAGES = ["base", "base-devel",
-                      "efibootmgr", "vim", "dialog", "grub"]
+                      "efibootmgr", "vim", "dialog", "grub", "linux", "linux-firmware"]
 
 # the kernel or kernels to install it should be a list
 KERNEL = ["linux"]
